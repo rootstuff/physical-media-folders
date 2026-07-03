@@ -189,7 +189,7 @@ class PMF_Media_Library {
 	 */
 	public function apply_grid_filter( $args ) {
 		if ( isset( $_REQUEST['query']['pmf_folder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core verifies the ajax nonce.
-			$folder = self::normalize_choice( sanitize_text_field( wp_unslash( $_REQUEST['query']['pmf_folder'] ) ) );
+			$folder = self::normalize_choice( sanitize_text_field( wp_unslash( $_REQUEST['query']['pmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core verifies the ajax nonce.
 			if ( null !== $folder ) {
 				$args['pmf_folder'] = ( '' === $folder ) ? self::ROOT : $folder;
 			}

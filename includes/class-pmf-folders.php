@@ -13,6 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- folder membership is defined
+// by _wp_attached_file path prefixes; the meta APIs cannot express anchored
+// prefix scans or grouped counts, and results change with every file move.
+
 class PMF_Folders {
 
 	const MAX_DEPTH = 8;

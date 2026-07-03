@@ -13,6 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- this class IS the data layer
+// for the plugin's own redirects table; there is no higher-level API for it and
+// per-request lookups are not meaningfully cacheable.
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- {$table} is
+// built from $wpdb->prefix and a literal; table names cannot be placeholders.
+
 class PMF_Redirects {
 
 	/**

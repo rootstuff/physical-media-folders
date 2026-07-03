@@ -1,0 +1,5 @@
+# Exclude development files from wp.org distribution archives
+# (build with: git archive --format=zip HEAD -o physical-media-folders.zip)
+.gitignore export-ignore
+.gitattributes export-ignore
+README.md export-ignore

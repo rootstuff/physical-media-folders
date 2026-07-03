@@ -70,8 +70,10 @@ class PMF_Ajax {
 	public function move_attachments() {
 		$this->verify( PMF_Media_Library::move_capability() );
 
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- check_ajax_referer() runs in $this->verify() above.
 		$ids    = isset( $_POST['ids'] ) ? array_filter( array_map( 'intval', (array) wp_unslash( $_POST['ids'] ) ) ) : array();
 		$target = isset( $_POST['target'] ) ? PMF_Media_Library::normalize_choice( sanitize_text_field( wp_unslash( $_POST['target'] ) ) ) : null;
+		// phpcs:enable
 
 		if ( ! $ids || null === $target ) {
 			wp_send_json_error( array( 'message' => __( 'Nothing to move.', 'physical-media-folders' ) ), 400 );
@@ -107,9 +109,11 @@ class PMF_Ajax {
 	public function folder_op() {
 		$this->verify( PMF_Admin::manage_capability() );
 
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- check_ajax_referer() runs in $this->verify() above.
 		$op   = isset( $_POST['op'] ) ? sanitize_key( wp_unslash( $_POST['op'] ) ) : '';
 		$path = isset( $_POST['path'] ) ? sanitize_text_field( wp_unslash( $_POST['path'] ) ) : '';
 		$to   = isset( $_POST['to'] ) ? sanitize_text_field( wp_unslash( $_POST['to'] ) ) : '';
+		// phpcs:enable
 
 		switch ( $op ) {
 			case 'create':

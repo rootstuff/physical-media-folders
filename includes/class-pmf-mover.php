@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- GUID updates and targeted
+// URL rewrites in post_content have no core API; each runs once per moved file.
+
 class PMF_Mover {
 
 	/**
@@ -198,7 +201,7 @@ class PMF_Mover {
 			// Large batches move many files each (original + thumbnails);
 			// reset the execution clock per item where the host allows it.
 			if ( function_exists( 'set_time_limit' ) ) {
-				@set_time_limit( 60 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+				@set_time_limit( 60 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, Squiz.PHP.DiscouragedFunctions.Discouraged -- prevents mid-batch timeouts; silenced for hosts that disable it.
 			}
 
 			$outcome = self::move( $id, $folder );

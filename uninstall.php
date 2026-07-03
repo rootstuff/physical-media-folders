@@ -16,5 +16,5 @@ global $wpdb;
 
 delete_option( 'pmf_settings' );
 
-// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- plugin cleanup on uninstall.
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- dropping the plugin's own table on uninstall.
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}pmf_redirects" );
