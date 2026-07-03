@@ -592,6 +592,16 @@
 			}
 		} );
 
+		// List rows must not STAY draggable — it blocks selecting filename
+		// text. Reset after the gesture ends (mouseup for clicks, dragend
+		// for drags; mouseup does not fire during a native drag).
+		var resetListRowDraggable = function () {
+			document.querySelectorAll( '#the-list tr[draggable="true"]' ).forEach( function ( row ) {
+				row.draggable = false;
+			} );
+		};
+		document.addEventListener( 'mouseup', resetListRowDraggable );
+
 		document.addEventListener( 'dragstart', function ( event ) {
 			if ( ! event.target.closest ) {
 				return;
@@ -641,6 +651,7 @@
 
 		document.addEventListener( 'dragend', function ( event ) {
 			document.body.classList.remove( 'pmf-dragging' );
+			resetListRowDraggable();
 
 			// Recover clicks the browser promoted to drags: the "drag"
 			// ended near where it started without ever being dropped.

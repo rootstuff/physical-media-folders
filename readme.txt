@@ -4,7 +4,7 @@ Tags: media library, folders, organize, media, files
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.15
+Stable tag: 1.1.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,6 +54,10 @@ On standard WordPress rewrite setups (Apache with the WordPress .htaccess rules,
 
 URLs inside post content are rewritten. URLs stored in post meta or options are not (rewriting serialized data blindly is unsafe), but the 301 redirects keep those references working. The `pmf_attachment_moved` action lets you update custom storage yourself.
 
+= Does it work with very large media libraries? =
+
+Folder filtering matches against the `_wp_attached_file` meta value, which WordPress does not index. Libraries in the tens of thousands of attachments work fine; at hundreds of thousands, media queries with a folder filter may slow down. If that is your scale, adding a database index on `wp_postmeta (meta_key, meta_value(191))` restores fast filtering.
+
 = Is multisite supported? =
 
 Version 1.0 targets single-site installs. On multisite, activate it per-site rather than network-wide.
@@ -69,6 +73,15 @@ The settings option and the redirects table are removed. Your files and folders 
 3. The Folder Settings screen with the redirect log
 
 == Changelog ==
+
+= 1.1.16 =
+* Block editor (REST API) uploads now respect the folder routing, so the default upload folder applies to Gutenberg uploads too.
+* Moving files now requires edit permission on each attachment, not just upload_files — moves rewrite URLs in post content, so Authors can no longer indirectly edit content they cannot edit directly.
+* Prefix redirects match with LOCATE instead of LIKE, so folder names containing underscores no longer over-match unrelated paths.
+* Folder renames record their redirect before updating attachments, so files stay reachable even if the update is interrupted mid-way.
+* Large bulk-move selections are passed via a transient instead of the URL, and batch moves reset the PHP time limit per file.
+* List rows no longer stay drag-enabled after a click, restoring filename text selection.
+* The folder list ships once on the library screen instead of twice; assorted small cleanups.
 
 = 1.1.15 =
 * Fixed sporadic dead clicks on tree folders. Three causes: clicks landing during a background tree re-render lost their row (folder activation is now a single delegated listener on the stable container); tiny mouse movements promoted clicks to drags which browsers then swallow (a drag that ends within a few pixels of where it started, undropped, is now treated as the click it was meant to be); and passive count refreshes briefly disabled pointer events on the whole sidebar (they no longer do).

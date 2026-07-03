@@ -77,7 +77,18 @@ class PMF_Ajax {
 			wp_send_json_error( array( 'message' => __( 'Nothing to move.', 'physical-media-folders' ) ), 400 );
 		}
 
-		$result = PMF_Mover::move_many( $ids, $target );
+		$movable = PMF_Media_Library::filter_movable( $ids );
+		$denied  = count( $ids ) - count( $movable );
+
+		$result = PMF_Mover::move_many( $movable, $target );
+
+		if ( $denied ) {
+			$result['errors'][] = sprintf(
+				/* translators: %d: number of files */
+				_n( '%d file skipped: no permission to edit it.', '%d files skipped: no permission to edit them.', $denied, 'physical-media-folders' ),
+				$denied
+			);
+		}
 
 		wp_send_json_success(
 			array_merge(

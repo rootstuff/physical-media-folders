@@ -59,6 +59,25 @@ class PMF_Media_Library {
 	}
 
 	/**
+	 * Keep only the attachments this user may move. Moving rewrites URLs
+	 * across post content, so it requires edit rights on the attachment
+	 * itself, not just upload_files.
+	 *
+	 * @param int[] $ids Attachment IDs.
+	 * @return int[]
+	 */
+	public static function filter_movable( $ids ) {
+		return array_values(
+			array_filter(
+				array_map( 'intval', (array) $ids ),
+				function ( $id ) {
+					return current_user_can( 'edit_post', $id );
+				}
+			)
+		);
+	}
+
+	/**
 	 * The physical folder an attachment currently lives in.
 	 *
 	 * @param int $attachment_id Attachment ID.
@@ -254,11 +273,22 @@ class PMF_Media_Library {
 			return $redirect;
 		}
 
+		$ids = array_map( 'intval', $ids );
+
+		// Large selections would overflow URL length limits; park them in
+		// a transient and pass a sentinel instead.
+		if ( count( $ids ) > 100 ) {
+			set_transient( 'pmf_bulk_ids_' . get_current_user_id(), $ids, 15 * MINUTE_IN_SECONDS );
+			$ids_param = 'stored';
+		} else {
+			$ids_param = implode( ',', $ids );
+		}
+
 		return add_query_arg(
 			array(
 				'page'     => 'pmf-folders',
 				'pmf_view' => 'bulk-move',
-				'ids'      => implode( ',', array_map( 'intval', $ids ) ),
+				'ids'      => $ids_param,
 				'_wpnonce' => wp_create_nonce( 'pmf_bulk_move' ),
 			),
 			admin_url( 'upload.php' )
@@ -431,12 +461,16 @@ class PMF_Media_Library {
 			true
 		);
 
+		// On upload.php the full tree ships with pmf-tree; the dropdown
+		// builds its choices from that instead of a duplicate list.
 		wp_localize_script(
 			'pmf-media',
 			'pmfMedia',
 			array(
-				'choices' => self::folder_choices( __( 'All folders', 'physical-media-folders' ) ),
-				'label'   => __( 'Filter by folder', 'physical-media-folders' ),
+				'choices'   => ( 'upload.php' === $hook ) ? array() : self::folder_choices( __( 'All folders', 'physical-media-folders' ) ),
+				'label'     => __( 'Filter by folder', 'physical-media-folders' ),
+				'allLabel'  => __( 'All folders', 'physical-media-folders' ),
+				'rootLabel' => __( 'Uploads root', 'physical-media-folders' ),
 			)
 		);
 

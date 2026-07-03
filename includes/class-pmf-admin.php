@@ -80,7 +80,8 @@ class PMF_Admin {
 
 		switch ( $action ) {
 			case 'bulk_move':
-				$ids    = isset( $_POST['pmf_ids'] ) ? array_map( 'intval', explode( ',', sanitize_text_field( wp_unslash( $_POST['pmf_ids'] ) ) ) ) : array();
+				$raw    = isset( $_POST['pmf_ids'] ) ? sanitize_text_field( wp_unslash( $_POST['pmf_ids'] ) ) : '';
+				$ids    = $this->resolve_bulk_ids( $raw );
 				$target = isset( $_POST['pmf_target'] ) ? PMF_Media_Library::normalize_choice( sanitize_text_field( wp_unslash( $_POST['pmf_target'] ) ) ) : null;
 
 				if ( null === $target || ! $ids ) {
@@ -88,12 +89,24 @@ class PMF_Admin {
 					break;
 				}
 
-				$result  = PMF_Mover::move_many( $ids, $target );
+				$movable = PMF_Media_Library::filter_movable( $ids );
+				$denied  = count( $ids ) - count( $movable );
+
+				$result = PMF_Mover::move_many( $movable, $target );
+				delete_transient( 'pmf_bulk_ids_' . get_current_user_id() );
+
 				$message = sprintf(
 					/* translators: %d: number of files moved */
 					_n( '%d file moved.', '%d files moved.', $result['moved'], 'physical-media-folders' ),
 					$result['moved']
 				);
+				if ( $denied ) {
+					$result['errors'][] = sprintf(
+						/* translators: %d: number of files */
+						_n( '%d file skipped: no permission to edit it.', '%d files skipped: no permission to edit them.', $denied, 'physical-media-folders' ),
+						$denied
+					);
+				}
 				if ( $result['errors'] ) {
 					$message .= ' ' . sprintf(
 						/* translators: %s: error details */
@@ -127,6 +140,22 @@ class PMF_Admin {
 				$this->redirect_with_notice( true, __( 'Settings saved.', 'physical-media-folders' ) );
 				break;
 		}
+	}
+
+	/**
+	 * Selected IDs for the bulk-move flow. Large selections are parked in
+	 * a transient so the id list never overflows URL length limits; the
+	 * sentinel 'stored' stands in for them in the request.
+	 *
+	 * @param string $raw Raw ids value ('stored' or comma-separated ids).
+	 * @return int[]
+	 */
+	protected function resolve_bulk_ids( $raw ) {
+		if ( 'stored' === $raw ) {
+			$ids = get_transient( 'pmf_bulk_ids_' . get_current_user_id() );
+			return is_array( $ids ) ? array_filter( array_map( 'intval', $ids ) ) : array();
+		}
+		return array_filter( array_map( 'intval', explode( ',', $raw ) ) );
 	}
 
 	/**
@@ -258,7 +287,7 @@ class PMF_Admin {
 			wp_die( esc_html__( 'You are not allowed to do that.', 'physical-media-folders' ) );
 		}
 
-		$ids = isset( $_GET['ids'] ) ? array_filter( array_map( 'intval', explode( ',', sanitize_text_field( wp_unslash( $_GET['ids'] ) ) ) ) ) : array();
+		$ids = isset( $_GET['ids'] ) ? $this->resolve_bulk_ids( sanitize_text_field( wp_unslash( $_GET['ids'] ) ) ) : array();
 		?>
 		<div class="wrap pmf-wrap">
 			<h1><?php esc_html_e( 'Move files to folder', 'physical-media-folders' ); ?></h1>

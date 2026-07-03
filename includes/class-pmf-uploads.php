@@ -96,19 +96,9 @@ class PMF_Uploads {
 				?>
 			</select>
 		</p>
-		<script>
-			( function () {
-				var select = document.getElementById( 'pmf-upload-folder' );
-				select.addEventListener( 'change', function () {
-					// window.uploader is the plupload instance created by
-					// core's plupload-handlers.js on this screen.
-					if ( window.uploader && window.uploader.settings ) {
-						window.uploader.settings.multipart_params.pmf_folder = select.value;
-					}
-				} );
-			} )();
-		</script>
 		<?php
+		// The change listener that syncs this select into the plupload
+		// instance lives in assets/folder-picker.js.
 	}
 
 	/**
@@ -179,6 +169,12 @@ class PMF_Uploads {
 		// form used by media-new.php, which sends no action parameter.
 		if ( isset( $pagenow ) && 'async-upload.php' === $pagenow ) {
 			return true;
+		}
+
+		// The block editor uploads through the REST API.
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			$route = isset( $GLOBALS['wp']->query_vars['rest_route'] ) ? (string) $GLOBALS['wp']->query_vars['rest_route'] : '';
+			return (bool) preg_match( '#/wp/v2/media(?:/|$)#', $route );
 		}
 
 		// phpcs:disable WordPress.Security.NonceVerification -- routing decision only; core verifies nonces before handling the upload.

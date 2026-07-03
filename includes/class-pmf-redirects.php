@@ -208,11 +208,13 @@ class PMF_Redirects {
 			return $exact;
 		}
 
-		// Longest matching prefix rule (folder renames).
+		// Longest matching prefix rule (folder renames). LOCATE, not LIKE:
+		// stored paths often contain underscores, which are LIKE wildcards
+		// and would over-match unrelated paths.
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT old_path, new_path FROM {$table}
-				 WHERE match_type = 'prefix' AND %s LIKE CONCAT( old_path, '%%' )
+				 WHERE match_type = 'prefix' AND LOCATE( old_path, %s ) = 1
 				 ORDER BY LENGTH( old_path ) DESC LIMIT 1",
 				$request_path
 			)

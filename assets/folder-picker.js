@@ -186,6 +186,14 @@
 				input.value = currentLabel( select );
 			}
 		} );
+
+		// Programmatic value changes fire no event; resync as the pointer
+		// arrives so a stale label is corrected before it can be read.
+		wrap.addEventListener( 'mouseenter', function () {
+			if ( ! open ) {
+				input.value = currentLabel( select );
+			}
+		} );
 	}
 
 	function scan( root ) {
@@ -200,6 +208,17 @@
 		new window.MutationObserver( function () {
 			scan( document );
 		} ).observe( document.body, { childList: true, subtree: true } );
+
+		// On media-new.php, keep the plupload instance's destination in
+		// sync with the "Upload to folder" picker.
+		var uploadSelect = document.getElementById( 'pmf-upload-folder' );
+		if ( uploadSelect ) {
+			uploadSelect.addEventListener( 'change', function () {
+				if ( window.uploader && window.uploader.settings ) {
+					window.uploader.settings.multipart_params.pmf_folder = uploadSelect.value;
+				}
+			} );
+		}
 	}
 
 	if ( 'loading' === document.readyState ) {

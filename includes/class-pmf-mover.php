@@ -195,6 +195,12 @@ class PMF_Mover {
 		);
 
 		foreach ( array_map( 'intval', (array) $attachment_ids ) as $id ) {
+			// Large batches move many files each (original + thumbnails);
+			// reset the execution clock per item where the host allows it.
+			if ( function_exists( 'set_time_limit' ) ) {
+				@set_time_limit( 60 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			}
+
 			$outcome = self::move( $id, $folder );
 			if ( is_wp_error( $outcome ) ) {
 				$result['errors'][ $id ] = $outcome->get_error_message();

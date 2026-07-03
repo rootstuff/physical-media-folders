@@ -77,9 +77,10 @@ class PMF_Folders {
 			'+', '’', '«', '»', '”', '“', chr( 0 ),
 		);
 
-		$segment = str_replace( $special, '', $segment );
-		// Percent-encoded octets could smuggle stripped characters.
+		// Percent-encoded octets could smuggle stripped characters, so
+		// remove them while the '%' is still present.
 		$segment = preg_replace( '/%[0-9a-fA-F]{2}/', '', $segment );
+		$segment = str_replace( $special, '', $segment );
 		// Collapse whitespace runs to single hyphens.
 		$segment = preg_replace( '/[\r\n\t ]+/', '-', $segment );
 
@@ -414,6 +415,17 @@ class PMF_Folders {
 			)
 		);
 
+		// The redirect goes in BEFORE the per-attachment updates: if the
+		// loop is interrupted, every file stays reachable at its old URL
+		// (the directory itself has already moved on disk).
+		if ( pmf_get_setting( 'create_redirects' ) && $ids ) {
+			PMF_Redirects::add(
+				wp_parse_url( $old_url, PHP_URL_PATH ),
+				wp_parse_url( $new_url, PHP_URL_PATH ),
+				'prefix'
+			);
+		}
+
 		foreach ( $ids as $id ) {
 			$file = get_post_meta( $id, '_wp_attached_file', true );
 			$new  = $to . substr( $file, strlen( $from ) );
@@ -447,14 +459,6 @@ class PMF_Folders {
 					$new_url,
 					'%' . $wpdb->esc_like( $old_url ) . '%'
 				)
-			);
-		}
-
-		if ( pmf_get_setting( 'create_redirects' ) && $ids ) {
-			PMF_Redirects::add(
-				wp_parse_url( $old_url, PHP_URL_PATH ),
-				wp_parse_url( $new_url, PHP_URL_PATH ),
-				'prefix'
 			);
 		}
 
