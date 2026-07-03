@@ -49,13 +49,15 @@
 .media-modal .media-toolbar-secondary .pmf-modal-new-folder {
 	float: left;
 	margin: 4px 10px 0 0;
+	min-height: 32px;
+	max-height: 32px;
+	line-height: 30px;
+	padding: 0 12px;
 }
 
-.media-modal .attachments-browser .attachments,
-.media-modal .attachments-browser .attachments-wrapper,
-.media-modal .attachments-browser > .uploader-inline {
-	top: 118px;
-}
+/* The attachments grid's `top` is set at runtime from the measured
+   toolbar height (see admin.js) — toolbar height varies per modal
+   variant (labeled filters, control wrapping). */
 
 .pmf-modal-folder-input {
 	font-size: 13px;

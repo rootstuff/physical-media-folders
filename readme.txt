@@ -4,7 +4,7 @@ Tags: media library, folders, organize, media, files
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.18
+Stable tag: 1.1.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,9 @@ The settings option and the redirects table are removed. Your files and folders 
 3. The Folder Settings screen with the redirect log
 
 == Changelog ==
+
+= 1.1.19 =
+* The modal attachments grid is now positioned from the measured toolbar height instead of a fixed offset, so thumbnails are never clipped regardless of modal variant (labeled filters, wrapped controls) or window size. The New Folder button matches the 32px control height.
 
 = 1.1.18 =
 * Fixed the folder combobox inside the media modal: the dropdown panel is now fixed-positioned so it escapes the details sidebar's scroll clipping (with flip-up near the bottom of the screen), the input shows the full folder path instead of an ambiguous indented basename, and the label no longer reads a transient value mid filter-change.

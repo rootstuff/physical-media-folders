@@ -168,6 +168,29 @@
 		},
 	} );
 
+	/**
+	 * Inside the modal the attachments grid is absolutely positioned
+	 * beneath a fixed-height toolbar; our extra controls make the toolbar
+	 * taller than core expects (by an amount that varies per modal
+	 * variant), so the grid's top is set from the measured height.
+	 */
+	function syncModalLayout( browserEl ) {
+		var toolbar = browserEl.querySelector( ':scope > .media-toolbar' );
+		if ( ! toolbar ) {
+			return;
+		}
+		var height = toolbar.offsetHeight;
+		browserEl.querySelectorAll( ':scope > .attachments, :scope > .attachments-wrapper, :scope > .uploader-inline' ).forEach( function ( el ) {
+			el.style.top = height + 'px';
+		} );
+	}
+
+	function syncAllModalLayouts() {
+		document.querySelectorAll( '.media-modal .attachments-browser' ).forEach( syncModalLayout );
+	}
+
+	window.addEventListener( 'resize', syncAllModalLayouts );
+
 	var AttachmentsBrowser = wp.media.view.AttachmentsBrowser;
 
 	wp.media.view.AttachmentsBrowser = AttachmentsBrowser.extend( {
@@ -192,6 +215,15 @@
 					} ).render()
 				);
 			}
+
+			// Measure once attached, and again after webfonts/layout settle.
+			var el = this.el;
+			window.requestAnimationFrame( function () {
+				syncModalLayout( el );
+			} );
+			window.setTimeout( function () {
+				syncModalLayout( el );
+			}, 300 );
 		},
 	} );
 
