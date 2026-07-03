@@ -27,11 +27,11 @@
 }
 
 .pmf-combobox-panel {
-	position: absolute;
-	top: 100%;
-	left: 0;
+	/* Fixed so the panel escapes scroll containers (e.g. the media
+	   modal's details sidebar); coordinates set by positionPanel(). */
+	position: fixed;
 	z-index: 999999;
-	margin: 2px 0 0;
+	margin: 0;
 	padding: 2px 0;
 	list-style: none;
 	background: #fff;

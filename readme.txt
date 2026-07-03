@@ -4,7 +4,7 @@ Tags: media library, folders, organize, media, files
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.17
+Stable tag: 1.1.18
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ The settings option and the redirects table are removed. Your files and folders 
 3. The Folder Settings screen with the redirect log
 
 == Changelog ==
+
+= 1.1.18 =
+* Fixed the folder combobox inside the media modal: the dropdown panel is now fixed-positioned so it escapes the details sidebar's scroll clipping (with flip-up near the bottom of the screen), the input shows the full folder path instead of an ambiguous indented basename, and the label no longer reads a transient value mid filter-change.
+* Fixed the modal toolbar: the folder filter and New Folder button sat behind the thumbnails (core's toolbar has a fixed height); they now get their own row and the grid moves down to make room.
 
 = 1.1.17 =
 * The media modal (including the block editor's "Media Library" flow) is now a full folder workflow: uploads made in the modal land in the folder selected in its dropdown, and a New Folder button creates folders inline — the new folder becomes the active filter and upload destination.

@@ -23,6 +23,40 @@
 	vertical-align: middle;
 }
 
+/*
+ * The media modal's attachments toolbar has a fixed height and the
+ * thumbnail grid is absolutely positioned beneath it, so our folder
+ * controls (which wrap to a second row) would render behind the
+ * thumbnails. Give the folder controls their own row and move the
+ * grid down to make room.
+ */
+.media-modal .attachments-browser .media-toolbar {
+	height: auto;
+	min-height: 72px;
+	padding-bottom: 10px;
+}
+
+.media-modal .media-toolbar-secondary {
+	height: auto;
+}
+
+.media-modal .media-toolbar-secondary .pmf-combobox {
+	clear: left;
+	float: left;
+	margin: 4px 10px 0 0;
+}
+
+.media-modal .media-toolbar-secondary .pmf-modal-new-folder {
+	float: left;
+	margin: 4px 10px 0 0;
+}
+
+.media-modal .attachments-browser .attachments,
+.media-modal .attachments-browser .attachments-wrapper,
+.media-modal .attachments-browser > .uploader-inline {
+	top: 118px;
+}
+
 .pmf-modal-folder-input {
 	font-size: 13px;
 	min-height: 32px;
