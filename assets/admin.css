@@ -18,3 +18,23 @@
 #pmf-media-folder-filter {
 	max-width: 220px;
 }
+
+.pmf-modal-new-folder {
+	vertical-align: middle;
+}
+
+.pmf-modal-folder-input {
+	font-size: 13px;
+	min-height: 32px;
+	max-height: 32px;
+	padding: 0 8px;
+	margin-left: 6px;
+	vertical-align: middle;
+	width: 180px;
+}
+
+.pmf-modal-folder-error {
+	color: #d63638;
+	font-size: 12px;
+	margin-left: 8px;
+}

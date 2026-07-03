@@ -4,7 +4,7 @@ Tags: media library, folders, organize, media, files
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.16
+Stable tag: 1.1.17
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ The settings option and the redirects table are removed. Your files and folders 
 3. The Folder Settings screen with the redirect log
 
 == Changelog ==
+
+= 1.1.17 =
+* The media modal (including the block editor's "Media Library" flow) is now a full folder workflow: uploads made in the modal land in the folder selected in its dropdown, and a New Folder button creates folders inline — the new folder becomes the active filter and upload destination.
+* New uploads appear immediately in folder-filtered modal views (the upload-queue observation patch now covers the modal, not just the library grid).
 
 = 1.1.16 =
 * Block editor (REST API) uploads now respect the folder routing, so the default upload folder applies to Gutenberg uploads too.

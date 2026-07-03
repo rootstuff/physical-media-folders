@@ -3,7 +3,7 @@
  * Plugin Name:       Physical Media Folders
  * Plugin URI:        https://adambalee.com/plugins/physical-media-folders
  * Description:       Organize your media library into real folders on the server. Moves files physically, updates database paths, rewrites content URLs, and creates 301 redirects.
- * Version:           1.1.16
+ * Version:           1.1.17
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Adam Balee
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PMF_VERSION', '1.1.16' );
+define( 'PMF_VERSION', '1.1.17' );
 define( 'PMF_PLUGIN_FILE', __FILE__ );
 define( 'PMF_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PMF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

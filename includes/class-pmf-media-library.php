@@ -471,6 +471,14 @@ class PMF_Media_Library {
 				'label'     => __( 'Filter by folder', 'physical-media-folders' ),
 				'allLabel'  => __( 'All folders', 'physical-media-folders' ),
 				'rootLabel' => __( 'Uploads root', 'physical-media-folders' ),
+				'canManage' => current_user_can( PMF_Admin::manage_capability() ),
+				'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
+				'nonce'     => wp_create_nonce( 'pmf_ajax' ),
+				'i18n'      => array(
+					'newFolder'    => __( 'New folder', 'physical-media-folders' ),
+					'folderName'   => __( 'Folder name…', 'physical-media-folders' ),
+					'genericError' => __( 'Something went wrong. Please try again.', 'physical-media-folders' ),
+				),
 			)
 		);
 

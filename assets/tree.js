@@ -1055,45 +1055,6 @@
 		};
 	}
 
-	/**
-	 * Core only lets a media query watch the upload queue when its args are
-	 * on a small allowlist, so a query filtered by pmf_folder never shows
-	 * new uploads until reload. Re-enable observation when the only extra
-	 * args are ours — uploads land in the selected folder, so they belong
-	 * in the filtered view.
-	 */
-	function patchQueryObservation() {
-		if ( ! window.wp || ! wp.media || ! wp.media.model || ! wp.media.model.Query || ! wp.Uploader ) {
-			return;
-		}
-
-		var coreAllowed = [ 's', 'order', 'orderby', 'posts_per_page', 'post_mime_type', 'post_parent', 'author' ];
-		var ourKeys = [ 'pmf_folder', 'pmf_refresh' ];
-		var proto = wp.media.model.Query.prototype;
-		var originalInit = proto.initialize;
-
-		proto.initialize = function ( models, options ) {
-			originalInit.apply( this, arguments );
-
-			if ( ! this.args ) {
-				return;
-			}
-
-			var keys = Object.keys( this.args );
-			var hasOurs = keys.some( function ( key ) {
-				return ourKeys.indexOf( key ) !== -1;
-			} );
-			var foreign = keys.filter( function ( key ) {
-				return coreAllowed.indexOf( key ) === -1 && ourKeys.indexOf( key ) === -1;
-			} );
-			var alreadyObserving = ( this.observers || [] ).indexOf( wp.Uploader.queue ) !== -1;
-
-			if ( hasOurs && ! foreign.length && ! alreadyObserving ) {
-				this.observe( wp.Uploader.queue );
-			}
-		};
-	}
-
 	// ---- Mount --------------------------------------------------------------
 
 	function mount() {
@@ -1175,7 +1136,8 @@
 		render();
 		bindSourceDragging();
 		bindUploaderFolder();
-		patchQueryObservation();
+		// Upload-queue observation for folder-filtered queries is patched
+		// in admin.js, which loads on every media screen.
 	}
 
 	if ( document.readyState === 'loading' ) {
