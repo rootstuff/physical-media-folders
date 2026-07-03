@@ -1,0 +1,332 @@
+/* Physical Media Folders — folder tree sidebar. */
+
+.pmf-layout {
+	display: flex;
+	gap: 16px;
+	align-items: flex-start;
+}
+
+.pmf-layout > form#posts-filter,
+.pmf-frame-host {
+	flex: 1;
+	min-width: 0;
+}
+
+.pmf-frame-host > .media-frame {
+	position: relative;
+}
+
+.pmf-tree-sidebar {
+	flex: 0 0 260px;
+	max-width: 260px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 10px 0 6px;
+	margin-top: 12px;
+	max-height: calc(100vh - 120px);
+	overflow-y: auto;
+	position: sticky;
+	top: 46px;
+}
+
+.pmf-tree-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 12px 8px;
+	border-bottom: 1px solid #f0f0f1;
+	margin-bottom: 6px;
+}
+
+.pmf-header-actions {
+	display: inline-flex;
+	gap: 6px;
+	align-items: center;
+}
+
+.pmf-collapse-all {
+	line-height: 1;
+	font-weight: 700;
+	padding: 0 6px !important;
+	min-height: 24px;
+}
+
+.pmf-tree-search {
+	padding: 0 12px 8px;
+}
+
+.pmf-search-input {
+	width: 100%;
+	font-size: 13px;
+	padding: 3px 8px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+}
+
+.pmf-name mark {
+	background: #fff3cd;
+	color: inherit;
+	padding: 0;
+}
+
+.pmf-no-results {
+	margin: 8px 12px;
+	color: #787c82;
+	font-size: 13px;
+}
+
+.pmf-tree-notice {
+	margin: 4px 12px;
+	padding: 6px 8px;
+	font-size: 12px;
+	background: #edfaef;
+	border-left: 3px solid #00a32a;
+}
+
+.pmf-tree-notice-error {
+	background: #fcf0f1;
+	border-left-color: #d63638;
+}
+
+.pmf-tree-list,
+.pmf-children {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.pmf-row {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 5px 8px;
+	cursor: pointer;
+	user-select: none;
+	line-height: 1.4;
+	border-left: 3px solid transparent;
+}
+
+.pmf-row:hover {
+	background: #f6f7f7;
+}
+
+.pmf-row.pmf-selected {
+	background: #f0f6fc;
+	border-left-color: #2271b1;
+	font-weight: 600;
+}
+
+.pmf-row.pmf-drop-target {
+	background: #e5f1f8;
+	outline: 2px dashed #2271b1;
+	outline-offset: -2px;
+}
+
+.pmf-caret {
+	width: 18px;
+	height: 18px;
+	flex: 0 0 18px;
+	border: 0;
+	background: none;
+	padding: 0;
+	cursor: pointer;
+	color: #50575e;
+	font-size: 11px;
+	line-height: 18px;
+}
+
+.pmf-caret-empty {
+	cursor: default;
+}
+
+.pmf-icon {
+	flex: 0 0 auto;
+	font-size: 13px;
+}
+
+.pmf-name {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 13px;
+}
+
+.pmf-count {
+	flex: 0 0 auto;
+	font-size: 11px;
+	color: #787c82;
+	background: #f0f0f1;
+	border-radius: 9px;
+	padding: 0 7px;
+	line-height: 18px;
+}
+
+.pmf-actions {
+	display: none;
+	flex: 0 0 auto;
+	gap: 2px;
+}
+
+.pmf-row:hover .pmf-actions {
+	display: inline-flex;
+}
+
+.pmf-action {
+	border: 0;
+	background: none;
+	padding: 0 3px;
+	cursor: pointer;
+	color: #50575e;
+	font-size: 13px;
+	line-height: 18px;
+}
+
+.pmf-action:hover {
+	color: #2271b1;
+}
+
+.pmf-action-delete:hover,
+.pmf-action.pmf-armed {
+	color: #d63638;
+	font-weight: 700;
+}
+
+.pmf-inline-input {
+	flex: 1;
+	min-width: 0;
+	font-size: 13px;
+	padding: 1px 4px;
+}
+
+.pmf-busy {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+body.pmf-dragging .attachments-browser .attachment,
+body.pmf-dragging #the-list tr {
+	cursor: grabbing;
+}
+
+.pmf-drop-hint {
+	display: none;
+	margin: 4px 12px;
+	padding: 6px 8px;
+	font-size: 12px;
+	background: #f0f6fc;
+	border-left: 3px solid #2271b1;
+}
+
+body.pmf-dragging .pmf-drop-hint {
+	display: block;
+}
+
+/*
+ * Core's dropzone shows the "Drop files to upload" overlay on ANY dragover
+ * (it never inspects the drag's payload). During an internal move-drag the
+ * full-viewport overlay would swallow the drop before it reaches the tree,
+ * so keep it hidden. OS file drags never set body.pmf-dragging, so
+ * drag-to-upload keeps its overlay.
+ */
+body.pmf-dragging .uploader-window {
+	display: none !important;
+}
+
+/* The list view's folder dropdown should not stretch. */
+#pmf_folder_filter {
+	max-width: 220px;
+}
+
+/* ---- Grid toolbar: match the classic list-view layout ---- */
+
+/* Two stacked rows like the list view: dropdowns on top, search below. */
+#wp-media-grid .media-toolbar.wp-filter {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 10px;
+	height: auto;
+	min-height: 0;
+	padding: 12px 16px;
+}
+
+#wp-media-grid .media-toolbar-secondary,
+#wp-media-grid .media-toolbar-primary {
+	float: none;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	max-width: none;
+	height: auto;
+	min-height: 0;
+}
+
+#wp-media-grid .media-toolbar-secondary {
+	order: 1;
+}
+
+#wp-media-grid .media-toolbar-primary {
+	order: 2;
+	justify-content: flex-start;
+}
+
+#wp-media-grid .media-toolbar-secondary > *,
+#wp-media-grid .media-toolbar-primary > * {
+	margin: 0;
+}
+
+#wp-media-grid .media-toolbar select,
+#wp-media-grid .media-toolbar .attachment-filters {
+	font-size: 14px;
+	line-height: 30px;
+	color: #2c3338;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	background-color: #fff;
+	min-height: 32px;
+	max-height: 32px;
+	padding: 0 24px 0 8px;
+	max-width: 220px;
+}
+
+#wp-media-grid .media-toolbar-primary input[type="search"] {
+	font-size: 14px;
+	line-height: 30px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	min-height: 32px;
+	max-height: 32px;
+	padding: 0 8px;
+	width: 280px;
+}
+
+/* The list view hides its search label visually; do the same here. */
+#wp-media-grid .media-toolbar .media-search-input-label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	border: 0;
+}
+
+@media screen and (max-width: 782px) {
+	.pmf-layout {
+		flex-direction: column;
+	}
+
+	.pmf-tree-sidebar {
+		flex-basis: auto;
+		max-width: none;
+		width: 100%;
+		position: static;
+		max-height: 300px;
+	}
+}

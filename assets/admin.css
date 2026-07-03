@@ -1,0 +1,20 @@
+/* Physical Media Folders admin styles. */
+
+.pmf-wrap .pmf-form {
+	margin: 1em 0 2em;
+}
+
+.pmf-wrap .pmf-file-list {
+	max-height: 240px;
+	overflow-y: auto;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	padding: 8px 12px;
+	max-width: 720px;
+	list-style: none;
+	margin: 0 0 1.5em;
+}
+
+#pmf-media-folder-filter {
+	max-width: 220px;
+}
