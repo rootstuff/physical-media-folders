@@ -75,6 +75,7 @@ The settings option and the redirects table are removed. Your files and folders 
 == Changelog ==
 
 = 1.2.1 =
+* Fixed: the "Drop files to upload" panel in the media grid was misplaced and partially hidden behind the toolbar.
 * Fixed: folder navigation in the media grid stopped working after the attachment details modal had been opened (WordPress reassigns wp.media.frame to the modal; the tree now reads the grid frame from wp.media.frames.browse).
 * Fixed: folder counts in the tree did not update after moving a file via the folder select in the attachment details modal.
 * Redirect rules can now be deleted from the redirect log on the Folder Settings screen.

@@ -175,6 +175,13 @@
 	 * variant), so the grid's top is set from the measured height.
 	 */
 	function syncModalLayout( browserEl ) {
+		// Only the modal positions these elements absolutely beneath the
+		// toolbar. In the library grid they are in normal flow, where an
+		// inline `top` shifts the (relative) inline uploader over the
+		// toolbar instead.
+		if ( ! browserEl.closest( '.media-modal' ) ) {
+			return;
+		}
 		var toolbar = browserEl.querySelector( ':scope > .media-toolbar' );
 		if ( ! toolbar ) {
 			return;
