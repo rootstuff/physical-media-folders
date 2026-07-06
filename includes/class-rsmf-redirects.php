@@ -125,15 +125,10 @@ class RSMF_Redirects {
 		// One rule per source path.
 		$wpdb->delete( $table, array( 'old_path' => $old_path ) );
 
-		// Moving a file back to a previous home makes any rule *from* the new
-		// location circular — remove it.
-		$wpdb->delete(
-			$table,
-			array(
-				'old_path' => $new_path,
-				'new_path' => $old_path,
-			)
-		);
+		// Moving a file back to a previous home turns the old rule into a
+		// self-redirect (the collapse above rewrites A→B into A→A). Remove
+		// self-redirects, including any left behind by older versions.
+		$wpdb->query( "DELETE FROM {$table} WHERE old_path = new_path" );
 
 		$wpdb->insert(
 			$table,
@@ -144,6 +139,17 @@ class RSMF_Redirects {
 				'created'    => current_time( 'mysql' ),
 			)
 		);
+	}
+
+	/**
+	 * Delete a redirect rule.
+	 *
+	 * @param int $id Rule id.
+	 * @return bool Whether a row was deleted.
+	 */
+	public static function delete( $id ) {
+		global $wpdb;
+		return (bool) $wpdb->delete( self::table(), array( 'id' => absint( $id ) ) );
 	}
 
 	/**
@@ -245,7 +251,7 @@ class RSMF_Redirects {
 
 		return (array) $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT old_path, new_path, match_type, created FROM {$table} ORDER BY id DESC LIMIT %d",
+				"SELECT id, old_path, new_path, match_type, created FROM {$table} ORDER BY id DESC LIMIT %d",
 				$limit
 			),
 			ARRAY_A

@@ -4,7 +4,7 @@ Tags: media library, folders, organize, media, files
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,12 @@ The settings option and the redirects table are removed. Your files and folders 
 3. The Folder Settings screen with the redirect log
 
 == Changelog ==
+
+= 1.2.1 =
+* Fixed: folder navigation in the media grid stopped working after the attachment details modal had been opened (WordPress reassigns wp.media.frame to the modal; the tree now reads the grid frame from wp.media.frames.browse).
+* Fixed: folder counts in the tree did not update after moving a file via the folder select in the attachment details modal.
+* Redirect rules can now be deleted from the redirect log on the Folder Settings screen.
+* Fixed: moving a file back to a previous location left behind a circular self-redirect. Self-redirects are no longer created, and existing ones are cleaned up on the next move.
 
 = 1.2.0 =
 * Renamed plugin to Rootstuff Media Folders. All internal prefixes changed from `pmf`/`PMF` to `rsmf`/`RSMF`, including the settings option (`rsmf_settings`), the redirects table (`rsmf_redirects`), and the developer hooks (`rsmf_attachment_moved`, `rsmf_folder_created`, `rsmf_folder_renamed`, `rsmf_folder_deleted`, `rsmf_upload_folder`, `rsmf_move_capability`, `rsmf_manage_capability`).

@@ -3,7 +3,7 @@
  * Plugin Name:       Rootstuff Media Folders
  * Plugin URI:        https://adambalee.com/plugins/rootstuff-media-folders
  * Description:       Organize your media library into real folders on the server. Moves files physically, updates database paths, rewrites content URLs, and creates 301 redirects.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Adam Balee
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'RSMF_VERSION', '1.2.0' );
+define( 'RSMF_VERSION', '1.2.1' );
 define( 'RSMF_PLUGIN_FILE', __FILE__ );
 define( 'RSMF_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RSMF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

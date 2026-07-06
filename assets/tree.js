@@ -205,12 +205,26 @@
 
 	// ---- Filtering the media library ---------------------------------------
 
-	function setGridFolderProp( path ) {
-		if ( ! window.wp || ! wp.media || ! wp.media.frame ) {
-			return false;
+	/**
+	 * The grid frame's content view. Core reassigns wp.media.frame to the
+	 * edit-attachments frame the first time the details modal opens, so the
+	 * manage frame must be read from wp.media.frames.browse, where it
+	 * registers itself permanently.
+	 *
+	 * @return {Object|null}
+	 */
+	function gridContent() {
+		if ( ! window.wp || ! wp.media ) {
+			return null;
 		}
-		var content = wp.media.frame.content.get();
-		if ( ! content || ! content.collection ) {
+		var frame = ( wp.media.frames && wp.media.frames.browse ) || wp.media.frame;
+		var content = frame && frame.content && frame.content.get();
+		return content && content.collection ? content : null;
+	}
+
+	function setGridFolderProp( path ) {
+		var content = gridContent();
+		if ( ! content ) {
 			return false;
 		}
 		content.collection.props.set( {
@@ -445,9 +459,9 @@
 	}
 
 	function refreshGrid() {
-		if ( mode === 'grid' && window.wp && wp.media && wp.media.frame ) {
-			var content = wp.media.frame.content.get();
-			if ( content && content.collection ) {
+		if ( mode === 'grid' ) {
+			var content = gridContent();
+			if ( content ) {
 				content.collection.props.set( { rsmf_refresh: Date.now() } );
 			}
 		} else if ( mode === 'list' ) {
@@ -1007,11 +1021,9 @@
 		var button = el( 'button', 'button rsmf-search-button', cfg.i18n.searchMedia );
 		button.type = 'button';
 		button.addEventListener( 'click', function () {
-			if ( window.wp && wp.media && wp.media.frame ) {
-				var content = wp.media.frame.content.get();
-				if ( content && content.collection ) {
-					content.collection.props.set( { search: input.value || '' } );
-				}
+			var content = gridContent();
+			if ( content ) {
+				content.collection.props.set( { search: input.value || '' } );
 			}
 		} );
 
@@ -1053,6 +1065,32 @@
 					.catch( function () {} );
 			} );
 		};
+	}
+
+	/**
+	 * Moving a file from the details modal's folder select goes through
+	 * core's save-attachment-compat ajax (jQuery), not through this script,
+	 * so the tree counts go stale. Watch for those saves and re-render with
+	 * fresh data, and re-query the grid so the file leaves the old folder's
+	 * view.
+	 */
+	function bindCompatSaveRefresh() {
+		if ( ! window.jQuery ) {
+			return;
+		}
+		window.jQuery( document ).ajaxComplete( function ( event, xhr, settings ) {
+			var data = typeof settings.data === 'string' ? settings.data : '';
+			if (
+				data.indexOf( 'action=save-attachment-compat' ) === -1 ||
+				data.indexOf( 'rsmf_folder' ) === -1
+			) {
+				return;
+			}
+			ajax( 'rsmf_tree', {}, true )
+				.then( render )
+				.catch( function () {} );
+			refreshGrid();
+		} );
 	}
 
 	// ---- Mount --------------------------------------------------------------
@@ -1101,6 +1139,8 @@
 				ensureGridSearchButton();
 				markGridTilesDraggable();
 			} ).observe( frameHost, { childList: true, subtree: true } );
+
+			bindCompatSaveRefresh();
 		} else if ( listForm ) {
 			mode = 'list';
 			var layout = el( 'div', 'rsmf-layout' );

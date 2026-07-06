@@ -70,7 +70,7 @@ class RSMF_Admin {
 
 		check_admin_referer( 'rsmf_' . $action );
 
-		$required = ( 'settings' === $action )
+		$required = in_array( $action, array( 'settings', 'delete_redirect' ), true )
 			? self::manage_capability()
 			: RSMF_Media_Library::move_capability();
 
@@ -138,6 +138,16 @@ class RSMF_Admin {
 
 				update_option( 'rsmf_settings', $settings );
 				$this->redirect_with_notice( true, __( 'Settings saved.', 'rootstuff-media-folders' ) );
+				break;
+
+			case 'delete_redirect':
+				$id = isset( $_POST['rsmf_redirect_id'] ) ? absint( wp_unslash( $_POST['rsmf_redirect_id'] ) ) : 0;
+
+				if ( $id && RSMF_Redirects::delete( $id ) ) {
+					$this->redirect_with_notice( true, __( 'Redirect deleted. Requests for the old path are no longer forwarded.', 'rootstuff-media-folders' ) );
+				} else {
+					$this->redirect_with_notice( new WP_Error( 'rsmf_missing', __( 'That redirect rule no longer exists.', 'rootstuff-media-folders' ) ), '' );
+				}
 				break;
 		}
 	}
@@ -256,6 +266,7 @@ class RSMF_Admin {
 								<th><?php esc_html_e( 'To', 'rootstuff-media-folders' ); ?></th>
 								<th><?php esc_html_e( 'Type', 'rootstuff-media-folders' ); ?></th>
 								<th><?php esc_html_e( 'Created', 'rootstuff-media-folders' ); ?></th>
+								<th><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'rootstuff-media-folders' ); ?></span></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -265,6 +276,16 @@ class RSMF_Admin {
 									<td><code><?php echo esc_html( $redirect['new_path'] ); ?></code></td>
 									<td><?php echo esc_html( $redirect['match_type'] ); ?></td>
 									<td><?php echo esc_html( $redirect['created'] ); ?></td>
+									<td>
+										<form method="post">
+											<?php wp_nonce_field( 'rsmf_delete_redirect' ); ?>
+											<input type="hidden" name="rsmf_action" value="delete_redirect" />
+											<input type="hidden" name="rsmf_redirect_id" value="<?php echo esc_attr( $redirect['id'] ); ?>" />
+											<button type="submit" class="button-link button-link-delete" onclick="return confirm( '<?php echo esc_js( __( 'Delete this redirect? Requests for the old path will no longer be forwarded.', 'rootstuff-media-folders' ) ); ?>' );">
+												<?php esc_html_e( 'Delete', 'rootstuff-media-folders' ); ?>
+											</button>
+										</form>
+									</td>
 								</tr>
 							<?php endforeach; ?>
 						</tbody>
