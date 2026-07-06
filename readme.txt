@@ -4,7 +4,7 @@ Tags: media library, folders, organize, media, files
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,9 @@ The settings option and the redirects table are removed. Your files and folders 
 5. List mode with the folder tree, a folder filter, and a sortable folder column.
 
 == Changelog ==
+
+= 1.2.3 =
+* Readme: screenshot captions updated for the wp.org listing. No code changes.
 
 = 1.2.2 =
 * Fixed: the "Drop files to upload" panel in the media grid was misplaced and partially hidden behind the toolbar.
