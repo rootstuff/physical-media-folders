@@ -68,9 +68,11 @@ The settings option and the redirects table are removed. Your files and folders 
 
 == Screenshots ==
 
-1. The folder tree sidebar in the media library grid
-2. Uploading directly into a selected folder
-3. The Folder Settings screen with the redirect log
+1. The folder tree beside the media library grid. Folders are real directories inside wp-content/uploads; selecting one shows the files that are physically inside it.
+2. Live folder search filters the tree as you type, with match highlighting at any depth.
+3. The Folder field in the attachment details modal. Changing it moves the file on the server, updates database paths, and creates a 301 redirect.
+4. The Folder Settings screen: move behavior options and the redirect log, where rules can be deleted.
+5. List mode with the folder tree, a folder filter, and a sortable folder column.
 
 == Changelog ==
 
