@@ -1,16 +1,16 @@
-/* Physical Media Folders — searchable folder combobox. */
+/* Rootstuff Media Folders — searchable folder combobox. */
 
-.pmf-combobox {
+.rsmf-combobox {
 	position: relative;
 	display: inline-block;
 	vertical-align: middle;
 }
 
-.pmf-combobox > select {
+.rsmf-combobox > select {
 	display: none;
 }
 
-.pmf-combobox input.pmf-combobox-input {
+.rsmf-combobox input.rsmf-combobox-input {
 	font-size: 14px;
 	line-height: 30px;
 	color: #2c3338;
@@ -26,7 +26,7 @@
 	padding-right: 24px;
 }
 
-.pmf-combobox-panel {
+.rsmf-combobox-panel {
 	/* Fixed so the panel escapes scroll containers (e.g. the media
 	   modal's details sidebar); coordinates set by positionPanel(). */
 	position: fixed;
@@ -45,7 +45,7 @@
 	overflow-y: auto;
 }
 
-.pmf-combobox-panel li {
+.rsmf-combobox-panel li {
 	margin: 0;
 	padding: 5px 10px;
 	font-size: 13px;
@@ -55,31 +55,31 @@
 	text-overflow: ellipsis;
 }
 
-.pmf-combobox-panel li.pmf-combobox-active {
+.rsmf-combobox-panel li.rsmf-combobox-active {
 	background: #2271b1;
 	color: #fff;
 }
 
-.pmf-combobox-panel li.pmf-combobox-active mark {
+.rsmf-combobox-panel li.rsmf-combobox-active mark {
 	color: #fff;
 }
 
-.pmf-combobox-panel li.pmf-combobox-current {
+.rsmf-combobox-panel li.rsmf-combobox-current {
 	font-weight: 600;
 }
 
-.pmf-combobox-panel li mark {
+.rsmf-combobox-panel li mark {
 	background: #fff3cd;
 	color: inherit;
 	padding: 0;
 }
 
-.pmf-combobox-panel li.pmf-combobox-active mark {
+.rsmf-combobox-panel li.rsmf-combobox-active mark {
 	background: transparent;
 	text-decoration: underline;
 }
 
-.pmf-combobox-panel .pmf-combobox-empty {
+.rsmf-combobox-panel .rsmf-combobox-empty {
 	color: #787c82;
 	cursor: default;
 }

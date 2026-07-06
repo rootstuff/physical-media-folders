@@ -1,10 +1,10 @@
-=== Physical Media Folders ===
+=== Rootstuff Media Folders ===
 Contributors: adambalee
 Tags: media library, folders, organize, media, files
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1.19
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Organize your media library into real folders on the server — not virtual ones
 
 == Description ==
 
-Most media folder plugins are *virtual*: they organize the media library screen but never touch the files on your server, which stay in year/month folders. Physical Media Folders is different — folders are **real directories inside wp-content/uploads**, and the plugin keeps WordPress fully consistent when files move:
+Most media folder plugins are *virtual*: they organize the media library screen but never touch the files on your server, which stay in year/month folders. Rootstuff Media Folders is different — folders are **real directories inside wp-content/uploads**, and the plugin keeps WordPress fully consistent when files move:
 
 * Moves the original file **and every generated thumbnail size**
 * Updates `_wp_attached_file` and attachment metadata
@@ -36,13 +36,13 @@ Because the filesystem itself is the source of truth, there is no folder taxonom
 * **Folder column** in the media library list table
 * Renaming a folder updates every attachment inside it (at any depth) and adds a single prefix redirect
 * Redirect chains are collapsed automatically (A→B then B→C becomes A→C)
-* Developer hooks: `pmf_attachment_moved`, `pmf_folder_created`, `pmf_folder_renamed`, `pmf_folder_deleted`, `pmf_upload_folder`, `pmf_move_capability`, `pmf_manage_capability`
+* Developer hooks: `rsmf_attachment_moved`, `rsmf_folder_created`, `rsmf_folder_renamed`, `rsmf_folder_deleted`, `rsmf_upload_folder`, `rsmf_move_capability`, `rsmf_manage_capability`
 
 = What it deliberately does not do =
 
 * It never overwrites an existing file — moves that would collide are skipped with a clear error.
 * Only empty folders can be deleted.
-* Post meta is not rewritten automatically (it may contain serialized data). Use the `pmf_attachment_moved` action to update custom storage.
+* Post meta is not rewritten automatically (it may contain serialized data). Use the `rsmf_attachment_moved` action to update custom storage.
 
 == Frequently Asked Questions ==
 
@@ -52,7 +52,7 @@ On standard WordPress rewrite setups (Apache with the WordPress .htaccess rules,
 
 = Does this work with page builders or custom fields? =
 
-URLs inside post content are rewritten. URLs stored in post meta or options are not (rewriting serialized data blindly is unsafe), but the 301 redirects keep those references working. The `pmf_attachment_moved` action lets you update custom storage yourself.
+URLs inside post content are rewritten. URLs stored in post meta or options are not (rewriting serialized data blindly is unsafe), but the 301 redirects keep those references working. The `rsmf_attachment_moved` action lets you update custom storage yourself.
 
 = Does it work with very large media libraries? =
 
@@ -73,6 +73,9 @@ The settings option and the redirects table are removed. Your files and folders 
 3. The Folder Settings screen with the redirect log
 
 == Changelog ==
+
+= 1.2.0 =
+* Renamed plugin to Rootstuff Media Folders. All internal prefixes changed from `pmf`/`PMF` to `rsmf`/`RSMF`, including the settings option (`rsmf_settings`), the redirects table (`rsmf_redirects`), and the developer hooks (`rsmf_attachment_moved`, `rsmf_folder_created`, `rsmf_folder_renamed`, `rsmf_folder_deleted`, `rsmf_upload_folder`, `rsmf_move_capability`, `rsmf_manage_capability`).
 
 = 1.1.19 =
 * The modal attachments grid is now positioned from the measured toolbar height instead of a fixed offset, so thumbnails are never clipped regardless of modal variant (labeled filters, wrapped controls) or window size. The New Folder button matches the 32px control height.

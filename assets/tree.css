@@ -1,22 +1,22 @@
-/* Physical Media Folders — folder tree sidebar. */
+/* Rootstuff Media Folders — folder tree sidebar. */
 
-.pmf-layout {
+.rsmf-layout {
 	display: flex;
 	gap: 16px;
 	align-items: flex-start;
 }
 
-.pmf-layout > form#posts-filter,
-.pmf-frame-host {
+.rsmf-layout > form#posts-filter,
+.rsmf-frame-host {
 	flex: 1;
 	min-width: 0;
 }
 
-.pmf-frame-host > .media-frame {
+.rsmf-frame-host > .media-frame {
 	position: relative;
 }
 
-.pmf-tree-sidebar {
+.rsmf-tree-sidebar {
 	flex: 0 0 260px;
 	max-width: 260px;
 	background: #fff;
@@ -30,7 +30,7 @@
 	top: 46px;
 }
 
-.pmf-tree-header {
+.rsmf-tree-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -39,24 +39,24 @@
 	margin-bottom: 6px;
 }
 
-.pmf-header-actions {
+.rsmf-header-actions {
 	display: inline-flex;
 	gap: 6px;
 	align-items: center;
 }
 
-.pmf-collapse-all {
+.rsmf-collapse-all {
 	line-height: 1;
 	font-weight: 700;
 	padding: 0 6px !important;
 	min-height: 24px;
 }
 
-.pmf-tree-search {
+.rsmf-tree-search {
 	padding: 0 12px 8px;
 }
 
-.pmf-search-input {
+.rsmf-search-input {
 	width: 100%;
 	font-size: 13px;
 	padding: 3px 8px;
@@ -64,19 +64,19 @@
 	border-radius: 3px;
 }
 
-.pmf-name mark {
+.rsmf-name mark {
 	background: #fff3cd;
 	color: inherit;
 	padding: 0;
 }
 
-.pmf-no-results {
+.rsmf-no-results {
 	margin: 8px 12px;
 	color: #787c82;
 	font-size: 13px;
 }
 
-.pmf-tree-notice {
+.rsmf-tree-notice {
 	margin: 4px 12px;
 	padding: 6px 8px;
 	font-size: 12px;
@@ -84,19 +84,19 @@
 	border-left: 3px solid #00a32a;
 }
 
-.pmf-tree-notice-error {
+.rsmf-tree-notice-error {
 	background: #fcf0f1;
 	border-left-color: #d63638;
 }
 
-.pmf-tree-list,
-.pmf-children {
+.rsmf-tree-list,
+.rsmf-children {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 }
 
-.pmf-row {
+.rsmf-row {
 	display: flex;
 	align-items: center;
 	gap: 4px;
@@ -107,23 +107,23 @@
 	border-left: 3px solid transparent;
 }
 
-.pmf-row:hover {
+.rsmf-row:hover {
 	background: #f6f7f7;
 }
 
-.pmf-row.pmf-selected {
+.rsmf-row.rsmf-selected {
 	background: #f0f6fc;
 	border-left-color: #2271b1;
 	font-weight: 600;
 }
 
-.pmf-row.pmf-drop-target {
+.rsmf-row.rsmf-drop-target {
 	background: #e5f1f8;
 	outline: 2px dashed #2271b1;
 	outline-offset: -2px;
 }
 
-.pmf-caret {
+.rsmf-caret {
 	width: 18px;
 	height: 18px;
 	flex: 0 0 18px;
@@ -136,16 +136,16 @@
 	line-height: 18px;
 }
 
-.pmf-caret-empty {
+.rsmf-caret-empty {
 	cursor: default;
 }
 
-.pmf-icon {
+.rsmf-icon {
 	flex: 0 0 auto;
 	font-size: 13px;
 }
 
-.pmf-name {
+.rsmf-name {
 	flex: 1;
 	min-width: 0;
 	overflow: hidden;
@@ -154,7 +154,7 @@
 	font-size: 13px;
 }
 
-.pmf-count {
+.rsmf-count {
 	flex: 0 0 auto;
 	font-size: 11px;
 	color: #787c82;
@@ -164,17 +164,17 @@
 	line-height: 18px;
 }
 
-.pmf-actions {
+.rsmf-actions {
 	display: none;
 	flex: 0 0 auto;
 	gap: 2px;
 }
 
-.pmf-row:hover .pmf-actions {
+.rsmf-row:hover .rsmf-actions {
 	display: inline-flex;
 }
 
-.pmf-action {
+.rsmf-action {
 	border: 0;
 	background: none;
 	padding: 0 3px;
@@ -184,34 +184,34 @@
 	line-height: 18px;
 }
 
-.pmf-action:hover {
+.rsmf-action:hover {
 	color: #2271b1;
 }
 
-.pmf-action-delete:hover,
-.pmf-action.pmf-armed {
+.rsmf-action-delete:hover,
+.rsmf-action.rsmf-armed {
 	color: #d63638;
 	font-weight: 700;
 }
 
-.pmf-inline-input {
+.rsmf-inline-input {
 	flex: 1;
 	min-width: 0;
 	font-size: 13px;
 	padding: 1px 4px;
 }
 
-.pmf-busy {
+.rsmf-busy {
 	opacity: 0.6;
 	pointer-events: none;
 }
 
-body.pmf-dragging .attachments-browser .attachment,
-body.pmf-dragging #the-list tr {
+body.rsmf-dragging .attachments-browser .attachment,
+body.rsmf-dragging #the-list tr {
 	cursor: grabbing;
 }
 
-.pmf-drop-hint {
+.rsmf-drop-hint {
 	display: none;
 	margin: 4px 12px;
 	padding: 6px 8px;
@@ -220,7 +220,7 @@ body.pmf-dragging #the-list tr {
 	border-left: 3px solid #2271b1;
 }
 
-body.pmf-dragging .pmf-drop-hint {
+body.rsmf-dragging .rsmf-drop-hint {
 	display: block;
 }
 
@@ -228,15 +228,15 @@ body.pmf-dragging .pmf-drop-hint {
  * Core's dropzone shows the "Drop files to upload" overlay on ANY dragover
  * (it never inspects the drag's payload). During an internal move-drag the
  * full-viewport overlay would swallow the drop before it reaches the tree,
- * so keep it hidden. OS file drags never set body.pmf-dragging, so
+ * so keep it hidden. OS file drags never set body.rsmf-dragging, so
  * drag-to-upload keeps its overlay.
  */
-body.pmf-dragging .uploader-window {
+body.rsmf-dragging .uploader-window {
 	display: none !important;
 }
 
 /* The list view's folder dropdown should not stretch. */
-#pmf_folder_filter {
+#rsmf_folder_filter {
 	max-width: 220px;
 }
 
@@ -318,11 +318,11 @@ body.pmf-dragging .uploader-window {
 }
 
 @media screen and (max-width: 782px) {
-	.pmf-layout {
+	.rsmf-layout {
 		flex-direction: column;
 	}
 
-	.pmf-tree-sidebar {
+	.rsmf-tree-sidebar {
 		flex-basis: auto;
 		max-width: none;
 		width: 100%;

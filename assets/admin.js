@@ -1,5 +1,5 @@
 /**
- * Physical Media Folders admin JS.
+ * Rootstuff Media Folders admin JS.
  *
  * Powers the folder experience inside wp.media views: the searchable
  * folder filter dropdown, folder-aware uploads from the media modal
@@ -10,40 +10,40 @@
 ( function () {
 	'use strict';
 
-	if ( ! window.wp || ! wp.media || ! window.pmfMedia ) {
+	if ( ! window.wp || ! wp.media || ! window.rsmfMedia ) {
 		return;
 	}
 
 	/**
 	 * Folder choices for the dropdown. On the library screen the full tree
-	 * already ships with pmf-tree, so choices are derived from it; other
+	 * already ships with rsmf-tree, so choices are derived from it; other
 	 * screens (the post editor's media modal) receive a flat list instead.
 	 */
 	function folderChoices() {
-		var choices = pmfMedia.choices || {};
+		var choices = rsmfMedia.choices || {};
 
 		if ( Object.keys( choices ).length ) {
 			return choices;
 		}
 
 		choices = {};
-		choices[ '' ] = pmfMedia.allLabel;
-		choices[ '/' ] = pmfMedia.rootLabel;
+		choices[ '' ] = rsmfMedia.allLabel;
+		choices[ '/' ] = rsmfMedia.rootLabel;
 
-		if ( window.pmfTree && pmfTree.tree ) {
+		if ( window.rsmfTree && rsmfTree.tree ) {
 			( function walk( nodes, depth ) {
 				nodes.forEach( function ( node ) {
 					choices[ node.path ] = new Array( depth + 1 ).join( '— ' ) + node.name;
 					walk( node.children, depth + 1 );
 				} );
-			} )( pmfTree.tree.folders, 0 );
+			} )( rsmfTree.tree.folders, 0 );
 		}
 
 		return choices;
 	}
 
 	var FolderFilter = wp.media.view.AttachmentFilters.extend( {
-		id: 'pmf-media-folder-filter',
+		id: 'rsmf-media-folder-filter',
 
 		createFilters: function () {
 			var filters = {};
@@ -52,7 +52,7 @@
 			Object.keys( choices ).forEach( function ( value ) {
 				filters[ value || 'all' ] = {
 					text: choices[ value ],
-					props: { pmf_folder: value || null },
+					props: { rsmf_folder: value || null },
 				};
 			} );
 
@@ -67,12 +67,12 @@
 	 */
 	var NewFolderButton = wp.media.View.extend( {
 		tagName: 'button',
-		className: 'button media-button pmf-modal-new-folder',
+		className: 'button media-button rsmf-modal-new-folder',
 
 		events: { click: 'onClick' },
 
 		render: function () {
-			this.$el.attr( 'type', 'button' ).text( pmfMedia.i18n.newFolder );
+			this.$el.attr( 'type', 'button' ).text( rsmfMedia.i18n.newFolder );
 			return this;
 		},
 
@@ -80,14 +80,14 @@
 			event.preventDefault();
 
 			var view = this;
-			if ( this.$el.next( '.pmf-modal-folder-input' ).length ) {
+			if ( this.$el.next( '.rsmf-modal-folder-input' ).length ) {
 				return;
 			}
 
 			var input = document.createElement( 'input' );
 			input.type = 'text';
-			input.className = 'pmf-modal-folder-input';
-			input.placeholder = pmfMedia.i18n.folderName;
+			input.className = 'rsmf-modal-folder-input';
+			input.placeholder = rsmfMedia.i18n.folderName;
 			this.el.insertAdjacentElement( 'afterend', input );
 			input.focus();
 
@@ -120,19 +120,19 @@
 			var path = parent ? parent + '/' + name : name;
 
 			var body = new window.FormData();
-			body.append( 'action', 'pmf_folder_op' );
-			body.append( 'nonce', pmfMedia.nonce );
+			body.append( 'action', 'rsmf_folder_op' );
+			body.append( 'nonce', rsmfMedia.nonce );
 			body.append( 'op', 'create' );
 			body.append( 'path', path );
 
 			window
-				.fetch( pmfMedia.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: body } )
+				.fetch( rsmfMedia.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: body } )
 				.then( function ( r ) {
 					return r.json();
 				} )
 				.then( function ( json ) {
 					if ( ! json || ! json.success ) {
-						throw new Error( ( json && json.data && json.data.message ) || pmfMedia.i18n.genericError );
+						throw new Error( ( json && json.data && json.data.message ) || rsmfMedia.i18n.genericError );
 					}
 
 					done();
@@ -142,7 +142,7 @@
 					// and the upload destination all follow.
 					var depth = path.split( '/' ).length - 1;
 					var label = new Array( depth + 1 ).join( '— ' ) + name;
-					filterView.filters[ path ] = { text: label, props: { pmf_folder: path } };
+					filterView.filters[ path ] = { text: label, props: { rsmf_folder: path } };
 
 					var option = new window.Option( label, path );
 					var parentOption = parent ? select.querySelector( 'option[value="' + window.CSS.escape( parent ) + '"]' ) : null;
@@ -158,7 +158,7 @@
 				.catch( function ( error ) {
 					done();
 					var note = document.createElement( 'span' );
-					note.className = 'pmf-modal-folder-error';
+					note.className = 'rsmf-modal-folder-error';
 					note.textContent = error.message;
 					view.el.insertAdjacentElement( 'afterend', note );
 					window.setTimeout( function () {
@@ -203,11 +203,11 @@
 				priority: -75,
 			} ).render();
 
-			this.toolbar.set( 'pmfFolderFilter', folderFilter );
+			this.toolbar.set( 'rsmfFolderFilter', folderFilter );
 
-			if ( pmfMedia.canManage ) {
+			if ( rsmfMedia.canManage ) {
 				this.toolbar.set(
-					'pmfNewFolder',
+					'rsmfNewFolder',
 					new NewFolderButton( {
 						controller: this.controller,
 						folderFilter: folderFilter,
@@ -240,13 +240,13 @@
 		}
 
 		var proto = wp.media.model.Query.prototype;
-		if ( proto.__pmfObserves ) {
+		if ( proto.__rsmfObserves ) {
 			return;
 		}
-		proto.__pmfObserves = true;
+		proto.__rsmfObserves = true;
 
 		var coreAllowed = [ 's', 'order', 'orderby', 'posts_per_page', 'post_mime_type', 'post_parent', 'author' ];
-		var ourKeys = [ 'pmf_folder', 'pmf_refresh' ];
+		var ourKeys = [ 'rsmf_folder', 'rsmf_refresh' ];
 		var originalInit = proto.initialize;
 
 		proto.initialize = function () {
@@ -289,19 +289,19 @@
 			}
 
 			// The library screen's tree handles its own destination.
-			if ( window.pmfTree ) {
+			if ( window.rsmfTree ) {
 				return;
 			}
 
 			this.uploader.bind( 'BeforeUpload', function ( up ) {
-				up.settings.multipart_params.pmf_folder = activeModalFolder();
+				up.settings.multipart_params.rsmf_folder = activeModalFolder();
 			} );
 		};
 
 		function activeModalFolder() {
-			var selects = document.querySelectorAll( '#pmf-media-folder-filter, select[id="pmf-media-folder-filter"]' );
+			var selects = document.querySelectorAll( '#rsmf-media-folder-filter, select[id="rsmf-media-folder-filter"]' );
 			for ( var i = selects.length - 1; i >= 0; i-- ) {
-				var wrap = selects[ i ].closest( '.pmf-combobox' ) || selects[ i ];
+				var wrap = selects[ i ].closest( '.rsmf-combobox' ) || selects[ i ];
 				if ( wrap.offsetParent !== null ) {
 					return selects[ i ].value || '';
 				}

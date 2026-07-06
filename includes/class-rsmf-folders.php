@@ -6,7 +6,7 @@
  * The filesystem is the source of truth. An attachment belongs to a folder
  * when dirname( _wp_attached_file ) equals that folder's relative path.
  *
- * @package Physical_Media_Folders
+ * @package Rootstuff_Media_Folders
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // by _wp_attached_file path prefixes; the meta APIs cannot express anchored
 // prefix scans or grouped counts, and results change with every file move.
 
-class PMF_Folders {
+class RSMF_Folders {
 
 	const MAX_DEPTH = 8;
 
@@ -42,7 +42,7 @@ class PMF_Folders {
 		$segments = explode( '/', $path );
 
 		if ( count( $segments ) > self::MAX_DEPTH ) {
-			return new WP_Error( 'pmf_too_deep', __( 'Folder path is too deep.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_too_deep', __( 'Folder path is too deep.', 'rootstuff-media-folders' ) );
 		}
 
 		$clean = array();
@@ -50,11 +50,11 @@ class PMF_Folders {
 			// Validate the raw segment first: sanitization strips leading
 			// dots, which would silently accept hidden paths.
 			if ( '' === $segment || '.' === $segment[0] ) {
-				return new WP_Error( 'pmf_bad_segment', __( 'Folder path contains an invalid segment.', 'physical-media-folders' ) );
+				return new WP_Error( 'rsmf_bad_segment', __( 'Folder path contains an invalid segment.', 'rootstuff-media-folders' ) );
 			}
 			$segment = self::sanitize_segment( $segment );
 			if ( '' === $segment ) {
-				return new WP_Error( 'pmf_bad_segment', __( 'Folder path contains an invalid segment.', 'physical-media-folders' ) );
+				return new WP_Error( 'rsmf_bad_segment', __( 'Folder path contains an invalid segment.', 'rootstuff-media-folders' ) );
 			}
 			$clean[] = $segment;
 		}
@@ -104,7 +104,7 @@ class PMF_Folders {
 		$full    = wp_normalize_path( $base . ( '' === $relative ? '' : '/' . $relative ) );
 
 		if ( 0 !== strpos( trailingslashit( $full ), trailingslashit( $base ) ) ) {
-			return new WP_Error( 'pmf_outside_uploads', __( 'Path is outside the uploads directory.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_outside_uploads', __( 'Path is outside the uploads directory.', 'rootstuff-media-folders' ) );
 		}
 
 		return $full;
@@ -310,7 +310,7 @@ class PMF_Folders {
 			return $relative;
 		}
 		if ( '' === $relative ) {
-			return new WP_Error( 'pmf_empty_path', __( 'Folder name is required.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_empty_path', __( 'Folder name is required.', 'rootstuff-media-folders' ) );
 		}
 
 		$full = self::absolute_path( $relative );
@@ -319,14 +319,14 @@ class PMF_Folders {
 		}
 
 		if ( is_dir( $full ) ) {
-			return new WP_Error( 'pmf_exists', __( 'That folder already exists.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_exists', __( 'That folder already exists.', 'rootstuff-media-folders' ) );
 		}
 
 		if ( ! wp_mkdir_p( $full ) ) {
-			return new WP_Error( 'pmf_mkdir_failed', __( 'Could not create the folder on the server. Check file permissions.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_mkdir_failed', __( 'Could not create the folder on the server. Check file permissions.', 'rootstuff-media-folders' ) );
 		}
 
-		do_action( 'pmf_folder_created', $relative );
+		do_action( 'rsmf_folder_created', $relative );
 
 		return $relative;
 	}
@@ -350,13 +350,13 @@ class PMF_Folders {
 			return $to;
 		}
 		if ( '' === $from || '' === $to ) {
-			return new WP_Error( 'pmf_empty_path', __( 'Both the current and new folder paths are required.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_empty_path', __( 'Both the current and new folder paths are required.', 'rootstuff-media-folders' ) );
 		}
 		if ( $from === $to ) {
-			return new WP_Error( 'pmf_same_path', __( 'The new folder path matches the current one.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_same_path', __( 'The new folder path matches the current one.', 'rootstuff-media-folders' ) );
 		}
 		if ( 0 === strpos( $to . '/', $from . '/' ) ) {
-			return new WP_Error( 'pmf_into_self', __( 'A folder cannot be moved inside itself.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_into_self', __( 'A folder cannot be moved inside itself.', 'rootstuff-media-folders' ) );
 		}
 
 		$from_full = self::absolute_path( $from );
@@ -369,25 +369,25 @@ class PMF_Folders {
 		}
 
 		if ( ! is_dir( $from_full ) ) {
-			return new WP_Error( 'pmf_missing', __( 'The folder to rename does not exist.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_missing', __( 'The folder to rename does not exist.', 'rootstuff-media-folders' ) );
 		}
 		if ( file_exists( $to_full ) ) {
-			return new WP_Error( 'pmf_exists', __( 'A folder already exists at the new path.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_exists', __( 'A folder already exists at the new path.', 'rootstuff-media-folders' ) );
 		}
 
 		$parent = dirname( $to_full );
 		if ( ! wp_mkdir_p( $parent ) ) {
-			return new WP_Error( 'pmf_mkdir_failed', __( 'Could not create the destination parent folder.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_mkdir_failed', __( 'Could not create the destination parent folder.', 'rootstuff-media-folders' ) );
 		}
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- moving within uploads.
 		if ( ! rename( $from_full, $to_full ) ) {
-			return new WP_Error( 'pmf_rename_failed', __( 'Could not rename the folder on the server.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_rename_failed', __( 'Could not rename the folder on the server.', 'rootstuff-media-folders' ) );
 		}
 
 		$moved = self::update_database_after_rename( $from, $to );
 
-		do_action( 'pmf_folder_renamed', $from, $to, $moved );
+		do_action( 'rsmf_folder_renamed', $from, $to, $moved );
 
 		return array( 'moved' => $moved );
 	}
@@ -422,8 +422,8 @@ class PMF_Folders {
 		// The redirect goes in BEFORE the per-attachment updates: if the
 		// loop is interrupted, every file stays reachable at its old URL
 		// (the directory itself has already moved on disk).
-		if ( pmf_get_setting( 'create_redirects' ) && $ids ) {
-			PMF_Redirects::add(
+		if ( rsmf_get_setting( 'create_redirects' ) && $ids ) {
+			RSMF_Redirects::add(
 				wp_parse_url( $old_url, PHP_URL_PATH ),
 				wp_parse_url( $new_url, PHP_URL_PATH ),
 				'prefix'
@@ -442,7 +442,7 @@ class PMF_Folders {
 				wp_update_attachment_metadata( $id, $meta );
 			}
 
-			if ( pmf_get_setting( 'update_guid' ) ) {
+			if ( rsmf_get_setting( 'update_guid' ) ) {
 				$wpdb->update(
 					$wpdb->posts,
 					array( 'guid' => $uploads['baseurl'] . '/' . $new ),
@@ -454,7 +454,7 @@ class PMF_Folders {
 		}
 
 		// Post content is not serialized, so a SQL prefix replace is safe here.
-		if ( pmf_get_setting( 'rewrite_content' ) && $ids ) {
+		if ( rsmf_get_setting( 'rewrite_content' ) && $ids ) {
 			$wpdb->query(
 				$wpdb->prepare(
 					"UPDATE {$wpdb->posts} SET post_content = REPLACE( post_content, %s, %s )
@@ -482,7 +482,7 @@ class PMF_Folders {
 			return $relative;
 		}
 		if ( '' === $relative ) {
-			return new WP_Error( 'pmf_empty_path', __( 'The uploads root cannot be deleted.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_empty_path', __( 'The uploads root cannot be deleted.', 'rootstuff-media-folders' ) );
 		}
 
 		$full = self::absolute_path( $relative );
@@ -491,7 +491,7 @@ class PMF_Folders {
 		}
 
 		if ( ! is_dir( $full ) ) {
-			return new WP_Error( 'pmf_missing', __( 'The folder does not exist.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_missing', __( 'The folder does not exist.', 'rootstuff-media-folders' ) );
 		}
 
 		$entries = array_diff( scandir( $full ), array( '.', '..' ) );
@@ -499,7 +499,7 @@ class PMF_Folders {
 		$entries = array_diff( $entries, array( 'index.php', 'index.html', '.DS_Store' ) );
 
 		if ( ! empty( $entries ) ) {
-			return new WP_Error( 'pmf_not_empty', __( 'Only empty folders can be deleted. Move or delete its files first.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_not_empty', __( 'Only empty folders can be deleted. Move or delete its files first.', 'rootstuff-media-folders' ) );
 		}
 
 		foreach ( array( 'index.php', 'index.html', '.DS_Store' ) as $placeholder ) {
@@ -510,10 +510,10 @@ class PMF_Folders {
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
 		if ( ! rmdir( $full ) ) {
-			return new WP_Error( 'pmf_rmdir_failed', __( 'Could not delete the folder on the server.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_rmdir_failed', __( 'Could not delete the folder on the server.', 'rootstuff-media-folders' ) );
 		}
 
-		do_action( 'pmf_folder_deleted', $relative );
+		do_action( 'rsmf_folder_deleted', $relative );
 
 		return true;
 	}

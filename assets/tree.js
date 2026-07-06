@@ -1,5 +1,5 @@
 /**
- * Physical Media Folders — folder tree sidebar.
+ * Rootstuff Media Folders — folder tree sidebar.
  *
  * Renders an expandable folder tree next to the media library (grid and
  * list modes) and on the Media > Folders screen. Supports dragging
@@ -9,13 +9,13 @@
 ( function () {
 	'use strict';
 
-	var cfg = window.pmfTree;
+	var cfg = window.rsmfTree;
 	if ( ! cfg ) {
 		return;
 	}
 
 	var ROOT = '/'; // Sentinel for the uploads root (matches PHP).
-	var STORAGE_KEY = 'pmfExpandedFolders';
+	var STORAGE_KEY = 'rsmfExpandedFolders';
 
 	var state = {
 		tree: cfg.tree,
@@ -69,7 +69,7 @@
 			return;
 		}
 		noticeEl.textContent = message;
-		noticeEl.className = 'pmf-tree-notice' + ( isError ? ' pmf-tree-notice-error' : '' );
+		noticeEl.className = 'rsmf-tree-notice' + ( isError ? ' rsmf-tree-notice-error' : '' );
 		noticeEl.style.display = message ? 'block' : 'none';
 		if ( message && ! isError ) {
 			window.clearTimeout( notify.timer );
@@ -102,7 +102,7 @@
 		if ( ! passive ) {
 			state.busy = true;
 			if ( container ) {
-				container.classList.add( 'pmf-busy' );
+				container.classList.add( 'rsmf-busy' );
 			}
 		}
 
@@ -124,7 +124,7 @@
 				if ( ! passive ) {
 					state.busy = false;
 					if ( container ) {
-						container.classList.remove( 'pmf-busy' );
+						container.classList.remove( 'rsmf-busy' );
 					}
 				}
 			} );
@@ -189,7 +189,7 @@
 	 * using text nodes only.
 	 */
 	function highlightedName( name, query ) {
-		var span = el( 'span', 'pmf-name' );
+		var span = el( 'span', 'rsmf-name' );
 		var index = name.toLowerCase().indexOf( query );
 
 		if ( ! query || index === -1 ) {
@@ -214,7 +214,7 @@
 			return false;
 		}
 		content.collection.props.set( {
-			pmf_folder: path === null ? null : path === '' ? ROOT : path,
+			rsmf_folder: path === null ? null : path === '' ? ROOT : path,
 		} );
 		return true;
 	}
@@ -237,9 +237,9 @@
 		if ( mode === 'list' ) {
 			var url = new window.URL( window.location.href );
 			if ( path === null ) {
-				url.searchParams.delete( 'pmf_folder' );
+				url.searchParams.delete( 'rsmf_folder' );
 			} else {
-				url.searchParams.set( 'pmf_folder', path === '' ? ROOT : path );
+				url.searchParams.set( 'rsmf_folder', path === '' ? ROOT : path );
 			}
 			url.searchParams.delete( 'paged' );
 			loadListPage( url.toString(), true );
@@ -267,7 +267,7 @@
 		var seq = ++listRequestSeq;
 		var activeId = document.activeElement ? document.activeElement.id : '';
 
-		form.classList.add( 'pmf-busy' );
+		form.classList.add( 'rsmf-busy' );
 
 		window
 			.fetch( url, { credentials: 'same-origin' } )
@@ -297,11 +297,11 @@
 				}
 
 				if ( push ) {
-					window.history.pushState( { pmfFolder: state.selected }, '', url );
+					window.history.pushState( { rsmfFolder: state.selected }, '', url );
 				}
 
 				// The loaded URL is the source of truth for the selection.
-				var raw = new window.URL( url, window.location.origin ).searchParams.get( 'pmf_folder' );
+				var raw = new window.URL( url, window.location.origin ).searchParams.get( 'rsmf_folder' );
 				state.selected = raw === null ? null : raw === ROOT ? '' : raw;
 				updateAddNewLink();
 				render();
@@ -322,7 +322,7 @@
 					}
 				}
 
-				form.classList.remove( 'pmf-busy' );
+				form.classList.remove( 'rsmf-busy' );
 			} )
 			.catch( function () {
 				window.location.href = url;
@@ -347,7 +347,7 @@
 
 			var month = form.querySelector( 'select[name="m"]' );
 			var mime = form.querySelector( 'select[name="attachment-filter"]' );
-			var folder = form.querySelector( 'select[name="pmf_folder"]' );
+			var folder = form.querySelector( 'select[name="rsmf_folder"]' );
 			var search = form.querySelector( 'input[name="s"]' );
 
 			if ( month && month.value && '0' !== month.value ) {
@@ -361,9 +361,9 @@
 				url.searchParams.delete( 'attachment-filter' );
 			}
 			if ( folder && folder.value ) {
-				url.searchParams.set( 'pmf_folder', folder.value );
+				url.searchParams.set( 'rsmf_folder', folder.value );
 			} else {
-				url.searchParams.delete( 'pmf_folder' );
+				url.searchParams.delete( 'rsmf_folder' );
 			}
 			if ( search && search.value ) {
 				url.searchParams.set( 's', search.value );
@@ -387,7 +387,7 @@
 
 		// Dropdowns apply immediately, like the grid.
 		form.addEventListener( 'change', function ( event ) {
-			if ( event.target.matches( 'select[name="m"], select[name="pmf_folder"], select[name="attachment-filter"]' ) ) {
+			if ( event.target.matches( 'select[name="m"], select[name="rsmf_folder"], select[name="attachment-filter"]' ) ) {
 				loadListPage( filteredUrl(), true );
 			}
 		} );
@@ -437,9 +437,9 @@
 		}
 		var url = new window.URL( addNew.href );
 		if ( state.selected === null ) {
-			url.searchParams.delete( 'pmf_folder' );
+			url.searchParams.delete( 'rsmf_folder' );
 		} else {
-			url.searchParams.set( 'pmf_folder', state.selected === '' ? ROOT : state.selected );
+			url.searchParams.set( 'rsmf_folder', state.selected === '' ? ROOT : state.selected );
 		}
 		addNew.href = url.toString();
 	}
@@ -448,7 +448,7 @@
 		if ( mode === 'grid' && window.wp && wp.media && wp.media.frame ) {
 			var content = wp.media.frame.content.get();
 			if ( content && content.collection ) {
-				content.collection.props.set( { pmf_refresh: Date.now() } );
+				content.collection.props.set( { rsmf_refresh: Date.now() } );
 			}
 		} else if ( mode === 'list' ) {
 			window.location.reload();
@@ -458,7 +458,7 @@
 	// ---- Folder operations --------------------------------------------------
 
 	function moveAttachments( ids, targetPath ) {
-		ajax( 'pmf_move_attachments', {
+		ajax( 'rsmf_move_attachments', {
 			ids: ids,
 			target: targetPath === '' ? ROOT : targetPath,
 		} )
@@ -477,7 +477,7 @@
 	}
 
 	function folderOp( op, path, to ) {
-		return ajax( 'pmf_folder_op', { op: op, path: path, to: to || '' } )
+		return ajax( 'rsmf_folder_op', { op: op, path: path, to: to || '' } )
 			.then( function () {
 				render();
 				refreshGrid();
@@ -498,10 +498,10 @@
 
 	function getDragPayload( event ) {
 		var types = event.dataTransfer.types || [];
-		if ( types.indexOf( 'pmf/attachments' ) !== -1 ) {
+		if ( types.indexOf( 'rsmf/attachments' ) !== -1 ) {
 			return { kind: 'attachments' };
 		}
-		if ( types.indexOf( 'pmf/folder' ) !== -1 ) {
+		if ( types.indexOf( 'rsmf/folder' ) !== -1 ) {
 			return { kind: 'folder' };
 		}
 		return null;
@@ -516,7 +516,7 @@
 			}
 			event.preventDefault();
 			event.dataTransfer.dropEffect = 'move';
-			row.classList.add( 'pmf-drop-target' );
+			row.classList.add( 'rsmf-drop-target' );
 		} );
 
 		row.addEventListener( 'dragenter', function ( event ) {
@@ -534,17 +534,17 @@
 		} );
 
 		row.addEventListener( 'dragleave', function () {
-			row.classList.remove( 'pmf-drop-target' );
+			row.classList.remove( 'rsmf-drop-target' );
 			window.clearTimeout( expandTimer );
 		} );
 
 		row.addEventListener( 'drop', function ( event ) {
 			event.preventDefault();
-			row.classList.remove( 'pmf-drop-target' );
+			row.classList.remove( 'rsmf-drop-target' );
 			window.clearTimeout( expandTimer );
 			folderDragDropped = true;
 
-			var attachments = event.dataTransfer.getData( 'pmf/attachments' );
+			var attachments = event.dataTransfer.getData( 'rsmf/attachments' );
 			if ( attachments ) {
 				var ids = JSON.parse( attachments );
 				if ( ids.length ) {
@@ -553,7 +553,7 @@
 				return;
 			}
 
-			var folder = event.dataTransfer.getData( 'pmf/folder' );
+			var folder = event.dataTransfer.getData( 'rsmf/folder' );
 			if ( folder && cfg.canManage ) {
 				if ( folder === path || isDescendantPath( path, folder ) ) {
 					notify( cfg.i18n.cannotMoveIntoSelf, true );
@@ -608,8 +608,8 @@
 			}
 
 			// Folder-row drags also suppress the core upload overlay.
-			if ( event.target.closest( '.pmf-tree-sidebar .pmf-row' ) ) {
-				document.body.classList.add( 'pmf-dragging' );
+			if ( event.target.closest( '.rsmf-tree-sidebar .rsmf-row' ) ) {
+				document.body.classList.add( 'rsmf-dragging' );
 				return;
 			}
 
@@ -644,13 +644,13 @@
 				return;
 			}
 
-			event.dataTransfer.setData( 'pmf/attachments', JSON.stringify( ids ) );
+			event.dataTransfer.setData( 'rsmf/attachments', JSON.stringify( ids ) );
 			event.dataTransfer.effectAllowed = 'move';
-			document.body.classList.add( 'pmf-dragging' );
+			document.body.classList.add( 'rsmf-dragging' );
 		} );
 
 		document.addEventListener( 'dragend', function ( event ) {
-			document.body.classList.remove( 'pmf-dragging' );
+			document.body.classList.remove( 'rsmf-dragging' );
 			resetListRowDraggable();
 
 			// Recover clicks the browser promoted to drags: the "drag"
@@ -670,8 +670,8 @@
 	// ---- Inline editing -----------------------------------------------------
 
 	function startInlineInput( row, initialValue, placeholder, onCommit ) {
-		var nameEl = row.querySelector( '.pmf-name' );
-		var input = el( 'input', 'pmf-inline-input' );
+		var nameEl = row.querySelector( '.rsmf-name' );
+		var input = el( 'input', 'rsmf-inline-input' );
 		input.type = 'text';
 		input.value = initialValue;
 		input.placeholder = placeholder || '';
@@ -726,20 +726,20 @@
 		}
 		button.dataset.armed = '1';
 		button.textContent = cfg.i18n.confirmShort;
-		button.classList.add( 'pmf-armed' );
+		button.classList.add( 'rsmf-armed' );
 		window.setTimeout( function () {
 			delete button.dataset.armed;
 			button.textContent = '×';
-			button.classList.remove( 'pmf-armed' );
+			button.classList.remove( 'rsmf-armed' );
 		}, 3000 );
 	}
 
 	// ---- Rendering ----------------------------------------------------------
 
 	function buildActionButtons( row, node ) {
-		var actions = el( 'span', 'pmf-actions' );
+		var actions = el( 'span', 'rsmf-actions' );
 
-		var addBtn = el( 'button', 'pmf-action', '+' );
+		var addBtn = el( 'button', 'rsmf-action', '+' );
 		addBtn.type = 'button';
 		addBtn.title = cfg.i18n.newSubfolder;
 		addBtn.addEventListener( 'click', function ( event ) {
@@ -753,7 +753,7 @@
 		actions.appendChild( addBtn );
 
 		if ( node.path !== '' ) {
-			var renameBtn = el( 'button', 'pmf-action', '✎' );
+			var renameBtn = el( 'button', 'rsmf-action', '✎' );
 			renameBtn.type = 'button';
 			renameBtn.title = cfg.i18n.rename;
 			renameBtn.addEventListener( 'click', function ( event ) {
@@ -765,7 +765,7 @@
 			} );
 			actions.appendChild( renameBtn );
 
-			var deleteBtn = el( 'button', 'pmf-action pmf-action-delete', '×' );
+			var deleteBtn = el( 'button', 'rsmf-action rsmf-action-delete', '×' );
 			deleteBtn.type = 'button';
 			deleteBtn.title = cfg.i18n.deleteFolder;
 			deleteBtn.addEventListener( 'click', function ( event ) {
@@ -779,29 +779,29 @@
 	}
 
 	function buildNode( node, depth, searching ) {
-		var li = el( 'li', 'pmf-node' );
+		var li = el( 'li', 'rsmf-node' );
 		var hasChildren = node.children && node.children.length > 0;
 		var isExpanded = searching || state.expanded.has( node.path );
 
-		var row = el( 'div', 'pmf-row' );
+		var row = el( 'div', 'rsmf-row' );
 		row.style.paddingLeft = 8 + depth * 16 + 'px';
-		row.dataset.pmfTarget = pathToTarget( node.path );
+		row.dataset.rsmfTarget = pathToTarget( node.path );
 		if ( ! searching && hasChildren ) {
-			row.dataset.pmfToggle = '1';
+			row.dataset.rsmfToggle = '1';
 		}
 		if ( state.selected === node.path ) {
-			row.classList.add( 'pmf-selected' );
+			row.classList.add( 'rsmf-selected' );
 		}
 
-		var caret = el( 'button', 'pmf-caret' + ( hasChildren && ! searching ? '' : ' pmf-caret-empty' ) );
+		var caret = el( 'button', 'rsmf-caret' + ( hasChildren && ! searching ? '' : ' rsmf-caret-empty' ) );
 		caret.type = 'button';
 		caret.setAttribute( 'aria-expanded', isExpanded ? 'true' : 'false' );
 		caret.textContent = hasChildren ? ( isExpanded ? '▾' : '▸' ) : '';
 		row.appendChild( caret );
 
-		row.appendChild( el( 'span', 'pmf-icon', '📁' ) );
+		row.appendChild( el( 'span', 'rsmf-icon', '📁' ) );
 		row.appendChild( highlightedName( node.name, searching ? state.query : '' ) );
-		row.appendChild( el( 'span', 'pmf-count', String( node.count ) ) );
+		row.appendChild( el( 'span', 'rsmf-count', String( node.count ) ) );
 
 		if ( cfg.canManage ) {
 			row.appendChild( buildActionButtons( row, node ) );
@@ -811,7 +811,7 @@
 			row.draggable = true;
 			row.addEventListener( 'dragstart', function ( event ) {
 				event.stopPropagation();
-				event.dataTransfer.setData( 'pmf/folder', node.path );
+				event.dataTransfer.setData( 'rsmf/folder', node.path );
 				event.dataTransfer.effectAllowed = 'move';
 				folderDragInfo = { path: node.path, x: event.screenX, y: event.screenY };
 				folderDragDropped = false;
@@ -822,7 +822,7 @@
 		li.appendChild( row );
 
 		if ( hasChildren && isExpanded ) {
-			var children = el( 'ul', 'pmf-children' );
+			var children = el( 'ul', 'rsmf-children' );
 			node.children.forEach( function ( child ) {
 				children.appendChild( buildNode( child, depth + 1, searching ) );
 			} );
@@ -833,19 +833,19 @@
 	}
 
 	function buildSpecialRow( label, path, count, droppable, extraClass ) {
-		var li = el( 'li', 'pmf-node' );
-		var row = el( 'div', 'pmf-row pmf-row-special' + ( extraClass ? ' ' + extraClass : '' ) );
+		var li = el( 'li', 'rsmf-node' );
+		var row = el( 'div', 'rsmf-row rsmf-row-special' + ( extraClass ? ' ' + extraClass : '' ) );
 		row.style.paddingLeft = '8px';
-		row.dataset.pmfTarget = pathToTarget( path );
+		row.dataset.rsmfTarget = pathToTarget( path );
 		if ( state.selected === path ) {
-			row.classList.add( 'pmf-selected' );
+			row.classList.add( 'rsmf-selected' );
 		}
 
-		row.appendChild( el( 'span', 'pmf-caret pmf-caret-empty' ) );
-		row.appendChild( el( 'span', 'pmf-icon', path === null ? '🗂' : '🏠' ) );
-		row.appendChild( el( 'span', 'pmf-name', label ) );
+		row.appendChild( el( 'span', 'rsmf-caret rsmf-caret-empty' ) );
+		row.appendChild( el( 'span', 'rsmf-icon', path === null ? '🗂' : '🏠' ) );
+		row.appendChild( el( 'span', 'rsmf-name', label ) );
 		if ( count !== null ) {
-			row.appendChild( el( 'span', 'pmf-count', String( count ) ) );
+			row.appendChild( el( 'span', 'rsmf-count', String( count ) ) );
 		}
 
 		if ( droppable ) {
@@ -864,11 +864,11 @@
 
 		var searching = state.query.length > 0;
 		var nodes = searching ? filterNodes( state.tree.folders, state.query ) : state.tree.folders;
-		var list = el( 'ul', 'pmf-tree-list' );
+		var list = el( 'ul', 'rsmf-tree-list' );
 
 		if ( ! searching ) {
 			list.appendChild( buildSpecialRow( cfg.i18n.allFiles, null, null, false ) );
-			list.appendChild( buildSpecialRow( cfg.i18n.uploadsRoot, '', state.tree.root_count, true, 'pmf-root-row' ) );
+			list.appendChild( buildSpecialRow( cfg.i18n.uploadsRoot, '', state.tree.root_count, true, 'rsmf-root-row' ) );
 		}
 
 		nodes.forEach( function ( node ) {
@@ -876,19 +876,19 @@
 		} );
 
 		if ( searching && ! nodes.length ) {
-			listHost.appendChild( el( 'p', 'pmf-no-results', cfg.i18n.noMatches ) );
+			listHost.appendChild( el( 'p', 'rsmf-no-results', cfg.i18n.noMatches ) );
 		}
 
 		listHost.appendChild( list );
 	}
 
 	function buildChrome() {
-		var header = el( 'div', 'pmf-tree-header' );
+		var header = el( 'div', 'rsmf-tree-header' );
 		header.appendChild( el( 'strong', null, cfg.i18n.heading ) );
 
-		var actions = el( 'span', 'pmf-header-actions' );
+		var actions = el( 'span', 'rsmf-header-actions' );
 
-		var collapseBtn = el( 'button', 'button button-small pmf-collapse-all', '⌃' );
+		var collapseBtn = el( 'button', 'button button-small rsmf-collapse-all', '⌃' );
 		collapseBtn.type = 'button';
 		collapseBtn.title = cfg.i18n.collapseAll;
 		collapseBtn.setAttribute( 'aria-label', cfg.i18n.collapseAll );
@@ -901,7 +901,7 @@
 		header.appendChild( actions );
 
 		if ( cfg.canManage ) {
-			var newBtn = el( 'button', 'button button-small pmf-new-root', cfg.i18n.newFolder );
+			var newBtn = el( 'button', 'button button-small rsmf-new-root', cfg.i18n.newFolder );
 			newBtn.type = 'button';
 			newBtn.addEventListener( 'click', function () {
 				if ( state.query ) {
@@ -909,7 +909,7 @@
 					state.query = '';
 					render();
 				}
-				var rootRow = listHost.querySelector( '.pmf-root-row' );
+				var rootRow = listHost.querySelector( '.rsmf-root-row' );
 				if ( rootRow ) {
 					startInlineInput( rootRow, '', cfg.i18n.newFolderName, function ( value ) {
 						folderOp( 'create', value );
@@ -920,8 +920,8 @@
 		}
 		container.appendChild( header );
 
-		var searchWrap = el( 'div', 'pmf-tree-search' );
-		searchInput = el( 'input', 'pmf-search-input' );
+		var searchWrap = el( 'div', 'rsmf-tree-search' );
+		searchInput = el( 'input', 'rsmf-search-input' );
 		searchInput.type = 'search';
 		searchInput.placeholder = cfg.i18n.searchFolders;
 		searchInput.setAttribute( 'aria-label', cfg.i18n.searchFolders );
@@ -948,32 +948,32 @@
 		searchWrap.appendChild( searchInput );
 		container.appendChild( searchWrap );
 
-		noticeEl = el( 'div', 'pmf-tree-notice' );
+		noticeEl = el( 'div', 'rsmf-tree-notice' );
 		noticeEl.style.display = 'none';
 		container.appendChild( noticeEl );
 
-		// Shown only while dragging files (body.pmf-dragging).
-		container.appendChild( el( 'div', 'pmf-drop-hint', cfg.i18n.dropHint ) );
+		// Shown only while dragging files (body.rsmf-dragging).
+		container.appendChild( el( 'div', 'rsmf-drop-hint', cfg.i18n.dropHint ) );
 
-		listHost = el( 'div', 'pmf-tree-body' );
+		listHost = el( 'div', 'rsmf-tree-body' );
 		container.appendChild( listHost );
 
 		// One delegated listener on the stable container: it survives
 		// background re-renders that replace rows mid-click, and it still
 		// resolves when mousedown and mouseup land on different nodes.
 		listHost.addEventListener( 'click', function ( event ) {
-			if ( event.target.closest( '.pmf-action, .pmf-inline-input' ) ) {
+			if ( event.target.closest( '.rsmf-action, .rsmf-inline-input' ) ) {
 				return; // Direct handlers own these.
 			}
 
-			var row = event.target.closest( '.pmf-row' );
-			if ( ! row || ! listHost.contains( row ) || ! ( 'pmfTarget' in row.dataset ) ) {
+			var row = event.target.closest( '.rsmf-row' );
+			if ( ! row || ! listHost.contains( row ) || ! ( 'rsmfTarget' in row.dataset ) ) {
 				return;
 			}
 
-			var path = targetToPath( row.dataset.pmfTarget );
+			var path = targetToPath( row.dataset.rsmfTarget );
 
-			if ( event.target.closest( '.pmf-caret' ) && row.dataset.pmfToggle ) {
+			if ( event.target.closest( '.rsmf-caret' ) && row.dataset.rsmfToggle ) {
 				if ( state.expanded.has( path ) ) {
 					state.expanded.delete( path );
 				} else {
@@ -995,7 +995,7 @@
 	 */
 	function ensureGridSearchButton() {
 		var toolbar = document.querySelector( '#wp-media-grid .media-toolbar-primary' );
-		if ( ! toolbar || toolbar.querySelector( '.pmf-search-button' ) ) {
+		if ( ! toolbar || toolbar.querySelector( '.rsmf-search-button' ) ) {
 			return;
 		}
 
@@ -1004,7 +1004,7 @@
 			return;
 		}
 
-		var button = el( 'button', 'button pmf-search-button', cfg.i18n.searchMedia );
+		var button = el( 'button', 'button rsmf-search-button', cfg.i18n.searchMedia );
 		button.type = 'button';
 		button.addEventListener( 'click', function () {
 			if ( window.wp && wp.media && wp.media.frame ) {
@@ -1022,7 +1022,7 @@
 
 	/**
 	 * Send the currently selected folder with every upload so new files
-	 * land directly in it (server-side upload_dir filter reads pmf_folder),
+	 * land directly in it (server-side upload_dir filter reads rsmf_folder),
 	 * and refresh the tree counts when a batch finishes.
 	 */
 	function bindUploaderFolder() {
@@ -1037,7 +1037,7 @@
 				originalInit.apply( this, arguments );
 			}
 			this.uploader.bind( 'BeforeUpload', function ( up ) {
-				up.settings.multipart_params.pmf_folder =
+				up.settings.multipart_params.rsmf_folder =
 					state.selected === null ? '' : state.selected === '' ? ROOT : state.selected;
 			} );
 			this.uploader.bind( 'UploadComplete', function ( up, files ) {
@@ -1048,7 +1048,7 @@
 					notify( cfg.i18n.uploadedFiles.replace( '%d', ok ), false );
 				}
 				// Counts changed on the server; re-render with fresh data.
-				ajax( 'pmf_tree', {}, true )
+				ajax( 'rsmf_tree', {}, true )
 					.then( render )
 					.catch( function () {} );
 			} );
@@ -1061,7 +1061,7 @@
 		var grid = document.getElementById( 'wp-media-grid' );
 		var listForm = document.querySelector( 'body.upload-php form#posts-filter' );
 
-		container = el( 'div', 'pmf-tree-sidebar' );
+		container = el( 'div', 'rsmf-tree-sidebar' );
 
 		if ( grid ) {
 			mode = 'grid';
@@ -1070,8 +1070,8 @@
 			// itself would drag the heading and notices into the row, so
 			// build a two-column layout at the end of the wrap and adopt
 			// the frame into it once it appears.
-			var gridLayout = el( 'div', 'pmf-layout' );
-			var frameHost = el( 'div', 'pmf-frame-host' );
+			var gridLayout = el( 'div', 'rsmf-layout' );
+			var frameHost = el( 'div', 'rsmf-frame-host' );
 			gridLayout.appendChild( container );
 			gridLayout.appendChild( frameHost );
 			grid.appendChild( gridLayout );
@@ -1103,7 +1103,7 @@
 			} ).observe( frameHost, { childList: true, subtree: true } );
 		} else if ( listForm ) {
 			mode = 'list';
-			var layout = el( 'div', 'pmf-layout' );
+			var layout = el( 'div', 'rsmf-layout' );
 			listForm.parentNode.insertBefore( layout, listForm );
 			layout.appendChild( container );
 			layout.appendChild( listForm );

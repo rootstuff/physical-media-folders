@@ -3,14 +3,14 @@
  * Media library integration: folder filter in list and grid modes, a
  * "Move to folder" bulk action, and a folder field on attachment screens.
  *
- * @package Physical_Media_Folders
+ * @package Rootstuff_Media_Folders
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class PMF_Media_Library {
+class RSMF_Media_Library {
 
 	/**
 	 * Sentinel value meaning "the uploads root" in folder dropdowns, since
@@ -19,12 +19,12 @@ class PMF_Media_Library {
 	const ROOT = '/';
 
 	/**
-	 * @var PMF_Media_Library|null
+	 * @var RSMF_Media_Library|null
 	 */
 	protected static $instance = null;
 
 	/**
-	 * @return PMF_Media_Library
+	 * @return RSMF_Media_Library
 	 */
 	public static function instance() {
 		if ( null === self::$instance ) {
@@ -55,7 +55,7 @@ class PMF_Media_Library {
 	 * @return string
 	 */
 	public static function move_capability() {
-		return apply_filters( 'pmf_move_capability', 'upload_files' );
+		return apply_filters( 'rsmf_move_capability', 'upload_files' );
 	}
 
 	/**
@@ -104,9 +104,9 @@ class PMF_Media_Library {
 			$choices[''] = $all_label;
 		}
 
-		$choices[ self::ROOT ] = __( 'Uploads root', 'physical-media-folders' );
+		$choices[ self::ROOT ] = __( 'Uploads root', 'rootstuff-media-folders' );
 
-		foreach ( PMF_Folders::get_folders() as $folder ) {
+		foreach ( RSMF_Folders::get_folders() as $folder ) {
 			$depth              = substr_count( $folder, '/' );
 			$choices[ $folder ] = str_repeat( '— ', $depth ) . wp_basename( $folder );
 		}
@@ -129,7 +129,7 @@ class PMF_Media_Library {
 		if ( self::ROOT === $value ) {
 			return '';
 		}
-		$clean = PMF_Folders::sanitize_path( $value );
+		$clean = RSMF_Folders::sanitize_path( $value );
 		return is_wp_error( $clean ) ? null : $clean;
 	}
 
@@ -143,10 +143,10 @@ class PMF_Media_Library {
 			return;
 		}
 
-		$current = isset( $_GET['pmf_folder'] ) ? sanitize_text_field( wp_unslash( $_GET['pmf_folder'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only filter.
+		$current = isset( $_GET['rsmf_folder'] ) ? sanitize_text_field( wp_unslash( $_GET['rsmf_folder'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only filter.
 
-		echo '<select name="pmf_folder" id="pmf_folder_filter">';
-		foreach ( self::folder_choices( __( 'All folders', 'physical-media-folders' ) ) as $value => $label ) {
+		echo '<select name="rsmf_folder" id="rsmf_folder_filter">';
+		foreach ( self::folder_choices( __( 'All folders', 'rootstuff-media-folders' ) ) as $value => $label ) {
 			printf(
 				'<option value="%s"%s>%s</option>',
 				esc_attr( $value ),
@@ -169,13 +169,13 @@ class PMF_Media_Library {
 			return;
 		}
 
-		if ( ! isset( $_GET['pmf_folder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['rsmf_folder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
-		$folder = self::normalize_choice( sanitize_text_field( wp_unslash( $_GET['pmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$folder = self::normalize_choice( sanitize_text_field( wp_unslash( $_GET['rsmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( null !== $folder ) {
-			$query->set( 'pmf_folder', ( '' === $folder ) ? self::ROOT : $folder );
+			$query->set( 'rsmf_folder', ( '' === $folder ) ? self::ROOT : $folder );
 		}
 	}
 
@@ -188,10 +188,10 @@ class PMF_Media_Library {
 	 * @return array
 	 */
 	public function apply_grid_filter( $args ) {
-		if ( isset( $_REQUEST['query']['pmf_folder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core verifies the ajax nonce.
-			$folder = self::normalize_choice( sanitize_text_field( wp_unslash( $_REQUEST['query']['pmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core verifies the ajax nonce.
+		if ( isset( $_REQUEST['query']['rsmf_folder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core verifies the ajax nonce.
+			$folder = self::normalize_choice( sanitize_text_field( wp_unslash( $_REQUEST['query']['rsmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core verifies the ajax nonce.
 			if ( null !== $folder ) {
-				$args['pmf_folder'] = ( '' === $folder ) ? self::ROOT : $folder;
+				$args['rsmf_folder'] = ( '' === $folder ) ? self::ROOT : $folder;
 			}
 		}
 		return $args;
@@ -208,7 +208,7 @@ class PMF_Media_Library {
 	public function filter_by_folder_clauses( $clauses, $query ) {
 		global $wpdb;
 
-		$folder = $query->get( 'pmf_folder' );
+		$folder = $query->get( 'rsmf_folder' );
 		if ( ! $folder ) {
 			return $clauses;
 		}
@@ -216,10 +216,10 @@ class PMF_Media_Library {
 		if ( self::ROOT === $folder ) {
 			$clauses['where'] .= $wpdb->prepare(
 				" AND EXISTS (
-					SELECT 1 FROM {$wpdb->postmeta} pmf_meta
-					WHERE pmf_meta.post_id = {$wpdb->posts}.ID
-					AND pmf_meta.meta_key = '_wp_attached_file'
-					AND pmf_meta.meta_value NOT LIKE %s
+					SELECT 1 FROM {$wpdb->postmeta} rsmf_meta
+					WHERE rsmf_meta.post_id = {$wpdb->posts}.ID
+					AND rsmf_meta.meta_key = '_wp_attached_file'
+					AND rsmf_meta.meta_value NOT LIKE %s
 				)",
 				'%/%'
 			);
@@ -230,11 +230,11 @@ class PMF_Media_Library {
 
 		$clauses['where'] .= $wpdb->prepare(
 			" AND EXISTS (
-				SELECT 1 FROM {$wpdb->postmeta} pmf_meta
-				WHERE pmf_meta.post_id = {$wpdb->posts}.ID
-				AND pmf_meta.meta_key = '_wp_attached_file'
-				AND pmf_meta.meta_value LIKE %s
-				AND pmf_meta.meta_value NOT LIKE %s
+				SELECT 1 FROM {$wpdb->postmeta} rsmf_meta
+				WHERE rsmf_meta.post_id = {$wpdb->posts}.ID
+				AND rsmf_meta.meta_key = '_wp_attached_file'
+				AND rsmf_meta.meta_value LIKE %s
+				AND rsmf_meta.meta_value NOT LIKE %s
 			)",
 			$like,
 			$like . '/%'
@@ -251,7 +251,7 @@ class PMF_Media_Library {
 	 */
 	public function register_bulk_action( $actions ) {
 		if ( current_user_can( self::move_capability() ) ) {
-			$actions['pmf_move'] = __( 'Move to folder…', 'physical-media-folders' );
+			$actions['rsmf_move'] = __( 'Move to folder…', 'rootstuff-media-folders' );
 		}
 		return $actions;
 	}
@@ -265,7 +265,7 @@ class PMF_Media_Library {
 	 * @return string
 	 */
 	public function handle_bulk_action( $redirect, $action, $ids ) {
-		if ( 'pmf_move' !== $action || empty( $ids ) ) {
+		if ( 'rsmf_move' !== $action || empty( $ids ) ) {
 			return $redirect;
 		}
 
@@ -278,7 +278,7 @@ class PMF_Media_Library {
 		// Large selections would overflow URL length limits; park them in
 		// a transient and pass a sentinel instead.
 		if ( count( $ids ) > 100 ) {
-			set_transient( 'pmf_bulk_ids_' . get_current_user_id(), $ids, 15 * MINUTE_IN_SECONDS );
+			set_transient( 'rsmf_bulk_ids_' . get_current_user_id(), $ids, 15 * MINUTE_IN_SECONDS );
 			$ids_param = 'stored';
 		} else {
 			$ids_param = implode( ',', $ids );
@@ -286,10 +286,10 @@ class PMF_Media_Library {
 
 		return add_query_arg(
 			array(
-				'page'     => 'pmf-folders',
-				'pmf_view' => 'bulk-move',
+				'page'     => 'rsmf-folders',
+				'rsmf_view' => 'bulk-move',
 				'ids'      => $ids_param,
-				'_wpnonce' => wp_create_nonce( 'pmf_bulk_move' ),
+				'_wpnonce' => wp_create_nonce( 'rsmf_bulk_move' ),
 			),
 			admin_url( 'upload.php' )
 		);
@@ -310,7 +310,7 @@ class PMF_Media_Library {
 		$current = self::get_attachment_folder( $post->ID );
 		$value   = ( '' === $current ) ? self::ROOT : $current;
 
-		$html = '<select name="attachments[' . $post->ID . '][pmf_folder]" id="attachments-' . $post->ID . '-pmf_folder">';
+		$html = '<select name="attachments[' . $post->ID . '][rsmf_folder]" id="attachments-' . $post->ID . '-rsmf_folder">';
 		foreach ( self::folder_choices() as $choice => $label ) {
 			if ( '' === $choice ) {
 				continue;
@@ -324,11 +324,11 @@ class PMF_Media_Library {
 		}
 		$html .= '</select>';
 
-		$fields['pmf_folder'] = array(
-			'label' => __( 'Folder', 'physical-media-folders' ),
+		$fields['rsmf_folder'] = array(
+			'label' => __( 'Folder', 'rootstuff-media-folders' ),
 			'input' => 'html',
 			'html'  => $html,
-			'helps' => __( 'Changing the folder moves the file on the server and updates links.', 'physical-media-folders' ),
+			'helps' => __( 'Changing the folder moves the file on the server and updates links.', 'rootstuff-media-folders' ),
 		);
 
 		return $fields;
@@ -342,11 +342,11 @@ class PMF_Media_Library {
 	 * @return array
 	 */
 	public function save_folder_field( $post, $attachment ) {
-		if ( ! isset( $attachment['pmf_folder'] ) || ! current_user_can( self::move_capability() ) ) {
+		if ( ! isset( $attachment['rsmf_folder'] ) || ! current_user_can( self::move_capability() ) ) {
 			return $post;
 		}
 
-		$target = self::normalize_choice( sanitize_text_field( $attachment['pmf_folder'] ) );
+		$target = self::normalize_choice( sanitize_text_field( $attachment['rsmf_folder'] ) );
 		if ( null === $target ) {
 			return $post;
 		}
@@ -355,9 +355,9 @@ class PMF_Media_Library {
 			return $post;
 		}
 
-		$result = PMF_Mover::move( $post['ID'], $target );
+		$result = RSMF_Mover::move( $post['ID'], $target );
 		if ( is_wp_error( $result ) ) {
-			$post['errors']['pmf_folder']['errors'][] = $result->get_error_message();
+			$post['errors']['rsmf_folder']['errors'][] = $result->get_error_message();
 		}
 
 		return $post;
@@ -370,7 +370,7 @@ class PMF_Media_Library {
 	 * @return array
 	 */
 	public function add_folder_column( $columns ) {
-		$columns['pmf_folder'] = __( 'Folder', 'physical-media-folders' );
+		$columns['rsmf_folder'] = __( 'Folder', 'rootstuff-media-folders' );
 		return $columns;
 	}
 
@@ -381,17 +381,17 @@ class PMF_Media_Library {
 	 * @param int    $post_id Attachment ID.
 	 */
 	public function render_folder_column( $column, $post_id ) {
-		if ( 'pmf_folder' !== $column ) {
+		if ( 'rsmf_folder' !== $column ) {
 			return;
 		}
 
 		$folder = self::get_attachment_folder( $post_id );
 		$value  = ( '' === $folder ) ? self::ROOT : $folder;
-		$label  = ( '' === $folder ) ? __( 'Uploads root', 'physical-media-folders' ) : $folder;
+		$label  = ( '' === $folder ) ? __( 'Uploads root', 'rootstuff-media-folders' ) : $folder;
 
 		printf(
 			'<a href="%s">%s</a>',
-			esc_url( add_query_arg( 'pmf_folder', rawurlencode( $value ), admin_url( 'upload.php?mode=list' ) ) ),
+			esc_url( add_query_arg( 'rsmf_folder', rawurlencode( $value ), admin_url( 'upload.php?mode=list' ) ) ),
 			esc_html( $label )
 		);
 	}
@@ -402,27 +402,27 @@ class PMF_Media_Library {
 	 */
 	protected function enqueue_folder_picker() {
 		wp_enqueue_script(
-			'pmf-folder-picker',
-			PMF_PLUGIN_URL . 'assets/folder-picker.js',
+			'rsmf-folder-picker',
+			RSMF_PLUGIN_URL . 'assets/folder-picker.js',
 			array(),
-			PMF_VERSION,
+			RSMF_VERSION,
 			true
 		);
 
 		wp_localize_script(
-			'pmf-folder-picker',
-			'pmfPicker',
+			'rsmf-folder-picker',
+			'rsmfPicker',
 			array(
-				'placeholder' => __( 'Search folders…', 'physical-media-folders' ),
-				'noMatches'   => __( 'No folders match.', 'physical-media-folders' ),
+				'placeholder' => __( 'Search folders…', 'rootstuff-media-folders' ),
+				'noMatches'   => __( 'No folders match.', 'rootstuff-media-folders' ),
 			)
 		);
 
 		wp_enqueue_style(
-			'pmf-folder-picker',
-			PMF_PLUGIN_URL . 'assets/folder-picker.css',
+			'rsmf-folder-picker',
+			RSMF_PLUGIN_URL . 'assets/folder-picker.css',
 			array(),
-			PMF_VERSION
+			RSMF_VERSION
 		);
 	}
 
@@ -433,8 +433,8 @@ class PMF_Media_Library {
 	 */
 	public function enqueue_assets( $hook ) {
 		// The settings page only needs the page styles and the picker.
-		if ( 'media_page_pmf-folders' === $hook ) {
-			wp_enqueue_style( 'pmf-admin', PMF_PLUGIN_URL . 'assets/admin.css', array(), PMF_VERSION );
+		if ( 'media_page_rsmf-folders' === $hook ) {
+			wp_enqueue_style( 'rsmf-admin', RSMF_PLUGIN_URL . 'assets/admin.css', array(), RSMF_VERSION );
 			$this->enqueue_folder_picker();
 			return;
 		}
@@ -454,39 +454,39 @@ class PMF_Media_Library {
 		$this->enqueue_folder_picker();
 
 		wp_enqueue_script(
-			'pmf-media',
-			PMF_PLUGIN_URL . 'assets/admin.js',
+			'rsmf-media',
+			RSMF_PLUGIN_URL . 'assets/admin.js',
 			array( 'media-views' ),
-			PMF_VERSION,
+			RSMF_VERSION,
 			true
 		);
 
-		// On upload.php the full tree ships with pmf-tree; the dropdown
+		// On upload.php the full tree ships with rsmf-tree; the dropdown
 		// builds its choices from that instead of a duplicate list.
 		wp_localize_script(
-			'pmf-media',
-			'pmfMedia',
+			'rsmf-media',
+			'rsmfMedia',
 			array(
-				'choices'   => ( 'upload.php' === $hook ) ? array() : self::folder_choices( __( 'All folders', 'physical-media-folders' ) ),
-				'label'     => __( 'Filter by folder', 'physical-media-folders' ),
-				'allLabel'  => __( 'All folders', 'physical-media-folders' ),
-				'rootLabel' => __( 'Uploads root', 'physical-media-folders' ),
-				'canManage' => current_user_can( PMF_Admin::manage_capability() ),
+				'choices'   => ( 'upload.php' === $hook ) ? array() : self::folder_choices( __( 'All folders', 'rootstuff-media-folders' ) ),
+				'label'     => __( 'Filter by folder', 'rootstuff-media-folders' ),
+				'allLabel'  => __( 'All folders', 'rootstuff-media-folders' ),
+				'rootLabel' => __( 'Uploads root', 'rootstuff-media-folders' ),
+				'canManage' => current_user_can( RSMF_Admin::manage_capability() ),
 				'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
-				'nonce'     => wp_create_nonce( 'pmf_ajax' ),
+				'nonce'     => wp_create_nonce( 'rsmf_ajax' ),
 				'i18n'      => array(
-					'newFolder'    => __( 'New folder', 'physical-media-folders' ),
-					'folderName'   => __( 'Folder name…', 'physical-media-folders' ),
-					'genericError' => __( 'Something went wrong. Please try again.', 'physical-media-folders' ),
+					'newFolder'    => __( 'New folder', 'rootstuff-media-folders' ),
+					'folderName'   => __( 'Folder name…', 'rootstuff-media-folders' ),
+					'genericError' => __( 'Something went wrong. Please try again.', 'rootstuff-media-folders' ),
 				),
 			)
 		);
 
 		wp_enqueue_style(
-			'pmf-admin',
-			PMF_PLUGIN_URL . 'assets/admin.css',
+			'rsmf-admin',
+			RSMF_PLUGIN_URL . 'assets/admin.css',
 			array(),
-			PMF_VERSION
+			RSMF_VERSION
 		);
 
 		// The tree sidebar loads on the library screens only (not inside
@@ -496,58 +496,58 @@ class PMF_Media_Library {
 		}
 
 		wp_enqueue_script(
-			'pmf-tree',
-			PMF_PLUGIN_URL . 'assets/tree.js',
+			'rsmf-tree',
+			RSMF_PLUGIN_URL . 'assets/tree.js',
 			array( 'wp-plupload' ),
-			PMF_VERSION,
+			RSMF_VERSION,
 			true
 		);
 
 		wp_enqueue_style(
-			'pmf-tree',
-			PMF_PLUGIN_URL . 'assets/tree.css',
+			'rsmf-tree',
+			RSMF_PLUGIN_URL . 'assets/tree.css',
 			array(),
-			PMF_VERSION
+			RSMF_VERSION
 		);
 
 		$current = null;
-		if ( isset( $_GET['pmf_folder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only filter state.
-			$current = self::normalize_choice( sanitize_text_field( wp_unslash( $_GET['pmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['rsmf_folder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only filter state.
+			$current = self::normalize_choice( sanitize_text_field( wp_unslash( $_GET['rsmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		wp_localize_script(
-			'pmf-tree',
-			'pmfTree',
+			'rsmf-tree',
+			'rsmfTree',
 			array(
 				'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
-				'nonce'         => wp_create_nonce( 'pmf_ajax' ),
-				'tree'          => PMF_Folders::get_tree(),
-				'canManage'     => current_user_can( PMF_Admin::manage_capability() ),
+				'nonce'         => wp_create_nonce( 'rsmf_ajax' ),
+				'tree'          => RSMF_Folders::get_tree(),
+				'canManage'     => current_user_can( RSMF_Admin::manage_capability() ),
 				'currentFolder' => $current,
 				'i18n'          => array(
-					'heading'           => __( 'Folders', 'physical-media-folders' ),
-					'allFiles'          => __( 'All files', 'physical-media-folders' ),
-					'uploadsRoot'       => __( 'Uploads root', 'physical-media-folders' ),
-					'newFolder'         => __( 'New folder', 'physical-media-folders' ),
-					'collapseAll'       => __( 'Collapse all folders', 'physical-media-folders' ),
-					'searchMedia'       => __( 'Search Media', 'physical-media-folders' ),
-					'dropHint'          => __( 'Drop onto a folder to move the file(s) there.', 'physical-media-folders' ),
-					'newSubfolder'      => __( 'New subfolder', 'physical-media-folders' ),
-					'newFolderName'     => __( 'Folder name…', 'physical-media-folders' ),
-					'folderName'        => __( 'Folder name', 'physical-media-folders' ),
-					'rename'            => __( 'Rename', 'physical-media-folders' ),
-					'deleteFolder'      => __( 'Delete (empty folders only)', 'physical-media-folders' ),
-					'confirmShort'      => __( 'Sure?', 'physical-media-folders' ),
-					'folderMoved'       => __( 'Folder moved. Links updated and a redirect was added.', 'physical-media-folders' ),
-					'folderDeleted'     => __( 'Folder deleted.', 'physical-media-folders' ),
+					'heading'           => __( 'Folders', 'rootstuff-media-folders' ),
+					'allFiles'          => __( 'All files', 'rootstuff-media-folders' ),
+					'uploadsRoot'       => __( 'Uploads root', 'rootstuff-media-folders' ),
+					'newFolder'         => __( 'New folder', 'rootstuff-media-folders' ),
+					'collapseAll'       => __( 'Collapse all folders', 'rootstuff-media-folders' ),
+					'searchMedia'       => __( 'Search Media', 'rootstuff-media-folders' ),
+					'dropHint'          => __( 'Drop onto a folder to move the file(s) there.', 'rootstuff-media-folders' ),
+					'newSubfolder'      => __( 'New subfolder', 'rootstuff-media-folders' ),
+					'newFolderName'     => __( 'Folder name…', 'rootstuff-media-folders' ),
+					'folderName'        => __( 'Folder name', 'rootstuff-media-folders' ),
+					'rename'            => __( 'Rename', 'rootstuff-media-folders' ),
+					'deleteFolder'      => __( 'Delete (empty folders only)', 'rootstuff-media-folders' ),
+					'confirmShort'      => __( 'Sure?', 'rootstuff-media-folders' ),
+					'folderMoved'       => __( 'Folder moved. Links updated and a redirect was added.', 'rootstuff-media-folders' ),
+					'folderDeleted'     => __( 'Folder deleted.', 'rootstuff-media-folders' ),
 					/* translators: %d is replaced in JS with the number of files moved. */
-					'movedFiles'        => __( '%d file(s) moved.', 'physical-media-folders' ),
-					'cannotMoveIntoSelf' => __( 'A folder cannot be moved inside itself.', 'physical-media-folders' ),
-					'genericError'      => __( 'Something went wrong. Please try again.', 'physical-media-folders' ),
-					'searchFolders'     => __( 'Search folders…', 'physical-media-folders' ),
-					'noMatches'         => __( 'No folders match.', 'physical-media-folders' ),
+					'movedFiles'        => __( '%d file(s) moved.', 'rootstuff-media-folders' ),
+					'cannotMoveIntoSelf' => __( 'A folder cannot be moved inside itself.', 'rootstuff-media-folders' ),
+					'genericError'      => __( 'Something went wrong. Please try again.', 'rootstuff-media-folders' ),
+					'searchFolders'     => __( 'Search folders…', 'rootstuff-media-folders' ),
+					'noMatches'         => __( 'No folders match.', 'rootstuff-media-folders' ),
 					/* translators: %d is replaced in JS with the number of files uploaded. */
-					'uploadedFiles'     => __( '%d file(s) uploaded.', 'physical-media-folders' ),
+					'uploadedFiles'     => __( '%d file(s) uploaded.', 'rootstuff-media-folders' ),
 				),
 			)
 		);

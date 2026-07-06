@@ -3,7 +3,7 @@
  * Moves a single attachment (original file plus every generated size) to a
  * different physical folder, then updates the database to match.
  *
- * @package Physical_Media_Folders
+ * @package Rootstuff_Media_Folders
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- GUID updates and targeted
 // URL rewrites in post_content have no core API; each runs once per moved file.
 
-class PMF_Mover {
+class RSMF_Mover {
 
 	/**
 	 * Move an attachment into a folder.
@@ -26,17 +26,17 @@ class PMF_Mover {
 		$attachment_id = (int) $attachment_id;
 
 		if ( 'attachment' !== get_post_type( $attachment_id ) ) {
-			return new WP_Error( 'pmf_not_attachment', __( 'That item is not an attachment.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_not_attachment', __( 'That item is not an attachment.', 'rootstuff-media-folders' ) );
 		}
 
-		$folder = PMF_Folders::sanitize_path( $folder );
+		$folder = RSMF_Folders::sanitize_path( $folder );
 		if ( is_wp_error( $folder ) ) {
 			return $folder;
 		}
 
 		$old_relative = get_post_meta( $attachment_id, '_wp_attached_file', true );
 		if ( ! $old_relative ) {
-			return new WP_Error( 'pmf_no_file', __( 'The attachment has no file path recorded.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_no_file', __( 'The attachment has no file path recorded.', 'rootstuff-media-folders' ) );
 		}
 
 		$old_relative = ltrim( wp_normalize_path( $old_relative ), '/' );
@@ -52,8 +52,8 @@ class PMF_Mover {
 		$base_dir = wp_normalize_path( $uploads['basedir'] );
 		$base_url = $uploads['baseurl'];
 
-		$old_dir = PMF_Folders::absolute_path( $old_folder );
-		$new_dir = PMF_Folders::absolute_path( $folder );
+		$old_dir = RSMF_Folders::absolute_path( $old_folder );
+		$new_dir = RSMF_Folders::absolute_path( $folder );
 		if ( is_wp_error( $old_dir ) ) {
 			return $old_dir;
 		}
@@ -63,14 +63,14 @@ class PMF_Mover {
 
 		if ( ! file_exists( $base_dir . '/' . $old_relative ) ) {
 			return new WP_Error(
-				'pmf_source_missing',
+				'rsmf_source_missing',
 				/* translators: %s: file path */
-				sprintf( __( 'The file %s is missing on the server.', 'physical-media-folders' ), $old_relative )
+				sprintf( __( 'The file %s is missing on the server.', 'rootstuff-media-folders' ), $old_relative )
 			);
 		}
 
 		if ( ! is_dir( $new_dir ) && ! wp_mkdir_p( $new_dir ) ) {
-			return new WP_Error( 'pmf_mkdir_failed', __( 'Could not create the destination folder.', 'physical-media-folders' ) );
+			return new WP_Error( 'rsmf_mkdir_failed', __( 'Could not create the destination folder.', 'rootstuff-media-folders' ) );
 		}
 
 		// Collect every file that belongs to this attachment: the original,
@@ -97,9 +97,9 @@ class PMF_Mover {
 		foreach ( $filenames as $name ) {
 			if ( file_exists( $new_dir . '/' . $name ) ) {
 				return new WP_Error(
-					'pmf_collision',
+					'rsmf_collision',
 					/* translators: 1: file name, 2: folder path */
-					sprintf( __( 'A file named %1$s already exists in %2$s.', 'physical-media-folders' ), $name, ( '' === $folder ? __( 'the uploads root', 'physical-media-folders' ) : $folder ) )
+					sprintf( __( 'A file named %1$s already exists in %2$s.', 'rootstuff-media-folders' ), $name, ( '' === $folder ? __( 'the uploads root', 'rootstuff-media-folders' ) : $folder ) )
 				);
 			}
 		}
@@ -121,9 +121,9 @@ class PMF_Mover {
 					rename( $new_dir . '/' . $undo, $old_dir . '/' . $undo );
 				}
 				return new WP_Error(
-					'pmf_move_failed',
+					'rsmf_move_failed',
 					/* translators: %s: file name */
-					sprintf( __( 'Could not move %s. No changes were made.', 'physical-media-folders' ), $name )
+					sprintf( __( 'Could not move %s. No changes were made.', 'rootstuff-media-folders' ), $name )
 				);
 			}
 
@@ -140,7 +140,7 @@ class PMF_Mover {
 			wp_update_attachment_metadata( $attachment_id, $meta );
 		}
 
-		if ( pmf_get_setting( 'update_guid' ) ) {
+		if ( rsmf_get_setting( 'update_guid' ) ) {
 			global $wpdb;
 			$wpdb->update(
 				$wpdb->posts,
@@ -157,12 +157,12 @@ class PMF_Mover {
 			$old_url = $old_prefix . $name;
 			$new_url = $new_prefix . $name;
 
-			if ( pmf_get_setting( 'rewrite_content' ) ) {
+			if ( rsmf_get_setting( 'rewrite_content' ) ) {
 				self::rewrite_content_urls( $old_url, $new_url );
 			}
 
-			if ( pmf_get_setting( 'create_redirects' ) ) {
-				PMF_Redirects::add(
+			if ( rsmf_get_setting( 'create_redirects' ) ) {
+				RSMF_Redirects::add(
 					wp_parse_url( $old_url, PHP_URL_PATH ),
 					wp_parse_url( $new_url, PHP_URL_PATH ),
 					'exact'
@@ -179,7 +179,7 @@ class PMF_Mover {
 		 * @param string $old_relative  Old path relative to uploads.
 		 * @param string $new_relative  New path relative to uploads.
 		 */
-		do_action( 'pmf_attachment_moved', $attachment_id, $old_relative, $new_relative );
+		do_action( 'rsmf_attachment_moved', $attachment_id, $old_relative, $new_relative );
 
 		return true;
 	}
@@ -220,7 +220,7 @@ class PMF_Mover {
 	 *
 	 * Post content is not PHP-serialized, so a direct SQL replace is safe.
 	 * Postmeta is intentionally not touched (it may hold serialized data);
-	 * use the pmf_attachment_moved action to handle custom storage.
+	 * use the rsmf_attachment_moved action to handle custom storage.
 	 *
 	 * @param string $old_url Old absolute URL.
 	 * @param string $new_url New absolute URL.

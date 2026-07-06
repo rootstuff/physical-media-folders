@@ -1,5 +1,5 @@
 /**
- * Physical Media Folders — searchable folder select.
+ * Rootstuff Media Folders — searchable folder select.
  *
  * Progressively enhances the plugin's folder <select> elements into a
  * type-to-filter combobox. The original select stays in the DOM (hidden)
@@ -10,14 +10,14 @@
 ( function () {
 	'use strict';
 
-	var cfg = window.pmfPicker || {};
+	var cfg = window.rsmfPicker || {};
 	var SELECTOR = [
-		'#pmf_folder_filter',
-		'#pmf-media-folder-filter',
-		'#pmf-upload-folder',
-		'#pmf_default_upload_folder',
-		'#pmf_target',
-		'select[id^="attachments-"][id$="-pmf_folder"]',
+		'#rsmf_folder_filter',
+		'#rsmf-media-folder-filter',
+		'#rsmf-upload-folder',
+		'#rsmf_default_upload_folder',
+		'#rsmf_target',
+		'select[id^="attachments-"][id$="-rsmf_folder"]',
 	].join( ', ' );
 
 	function currentLabel( select ) {
@@ -36,19 +36,19 @@
 	}
 
 	function enhance( select ) {
-		if ( select.dataset.pmfEnhanced ) {
+		if ( select.dataset.rsmfEnhanced ) {
 			return;
 		}
-		select.dataset.pmfEnhanced = '1';
+		select.dataset.rsmfEnhanced = '1';
 
 		var wrap = document.createElement( 'span' );
-		wrap.className = 'pmf-combobox';
+		wrap.className = 'rsmf-combobox';
 		select.parentNode.insertBefore( wrap, select );
 		wrap.appendChild( select );
 
 		var input = document.createElement( 'input' );
 		input.type = 'text';
-		input.className = 'pmf-combobox-input';
+		input.className = 'rsmf-combobox-input';
 		input.autocomplete = 'off';
 		input.setAttribute( 'role', 'combobox' );
 		input.setAttribute( 'aria-expanded', 'false' );
@@ -57,7 +57,7 @@
 		wrap.appendChild( input );
 
 		var panel = document.createElement( 'ul' );
-		panel.className = 'pmf-combobox-panel';
+		panel.className = 'rsmf-combobox-panel';
 		panel.setAttribute( 'role', 'listbox' );
 		panel.style.display = 'none';
 		wrap.appendChild( panel );
@@ -100,11 +100,11 @@
 
 		function setHighlight( index ) {
 			if ( highlighted >= 0 && visible[ highlighted ] ) {
-				visible[ highlighted ].classList.remove( 'pmf-combobox-active' );
+				visible[ highlighted ].classList.remove( 'rsmf-combobox-active' );
 			}
 			highlighted = index;
 			if ( highlighted >= 0 && visible[ highlighted ] ) {
-				visible[ highlighted ].classList.add( 'pmf-combobox-active' );
+				visible[ highlighted ].classList.add( 'rsmf-combobox-active' );
 				visible[ highlighted ].scrollIntoView( { block: 'nearest' } );
 			}
 		}
@@ -140,7 +140,7 @@
 				}
 
 				if ( option.value === select.value ) {
-					li.classList.add( 'pmf-combobox-current' );
+					li.classList.add( 'rsmf-combobox-current' );
 				}
 
 				li.addEventListener( 'mousedown', function ( event ) {
@@ -154,7 +154,7 @@
 
 			if ( ! visible.length ) {
 				var empty = document.createElement( 'li' );
-				empty.className = 'pmf-combobox-empty';
+				empty.className = 'rsmf-combobox-empty';
 				empty.textContent = cfg.noMatches || '';
 				panel.appendChild( empty );
 			}
@@ -264,11 +264,11 @@
 
 		// On media-new.php, keep the plupload instance's destination in
 		// sync with the "Upload to folder" picker.
-		var uploadSelect = document.getElementById( 'pmf-upload-folder' );
+		var uploadSelect = document.getElementById( 'rsmf-upload-folder' );
 		if ( uploadSelect ) {
 			uploadSelect.addEventListener( 'change', function () {
 				if ( window.uploader && window.uploader.settings ) {
-					window.uploader.settings.multipart_params.pmf_folder = uploadSelect.value;
+					window.uploader.settings.multipart_params.rsmf_folder = uploadSelect.value;
 				}
 			} );
 		}

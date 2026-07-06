@@ -1,8 +1,8 @@
-# Physical Media Folders
+# Rootstuff Media Folders
 
 Organize your WordPress media library into **real folders on the server** — not virtual ones.
 
-Most media folder plugins are virtual: they organize the media library screen but never touch the files on your server, which stay in `year/month` folders. Physical Media Folders is different — folders are real directories inside `wp-content/uploads`, and the plugin keeps WordPress fully consistent when files move:
+Most media folder plugins are virtual: they organize the media library screen but never touch the files on your server, which stay in `year/month` folders. Rootstuff Media Folders is different — folders are real directories inside `wp-content/uploads`, and the plugin keeps WordPress fully consistent when files move:
 
 - Moves the original file **and every generated thumbnail size**
 - Updates `_wp_attached_file` and attachment metadata

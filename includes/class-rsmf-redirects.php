@@ -6,7 +6,7 @@
  * try_files), a request for a missing static file falls through to
  * WordPress, where this class matches it against the redirect table.
  *
- * @package Physical_Media_Folders
+ * @package Rootstuff_Media_Folders
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,15 +19,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- {$table} is
 // built from $wpdb->prefix and a literal; table names cannot be placeholders.
 
-class PMF_Redirects {
+class RSMF_Redirects {
 
 	/**
-	 * @var PMF_Redirects|null
+	 * @var RSMF_Redirects|null
 	 */
 	protected static $instance = null;
 
 	/**
-	 * @return PMF_Redirects
+	 * @return RSMF_Redirects
 	 */
 	public static function instance() {
 		if ( null === self::$instance ) {
@@ -71,7 +71,7 @@ class PMF_Redirects {
 	 */
 	public static function table() {
 		global $wpdb;
-		return $wpdb->prefix . 'pmf_redirects';
+		return $wpdb->prefix . 'rsmf_redirects';
 	}
 
 	/**
@@ -188,7 +188,7 @@ class PMF_Redirects {
 			return;
 		}
 
-		wp_safe_redirect( home_url( $target ), 301, 'Physical Media Folders' );
+		wp_safe_redirect( home_url( $target ), 301, 'Rootstuff Media Folders' );
 		exit;
 	}
 

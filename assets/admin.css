@@ -1,10 +1,10 @@
-/* Physical Media Folders admin styles. */
+/* Rootstuff Media Folders admin styles. */
 
-.pmf-wrap .pmf-form {
+.rsmf-wrap .rsmf-form {
 	margin: 1em 0 2em;
 }
 
-.pmf-wrap .pmf-file-list {
+.rsmf-wrap .rsmf-file-list {
 	max-height: 240px;
 	overflow-y: auto;
 	background: #fff;
@@ -15,11 +15,11 @@
 	margin: 0 0 1.5em;
 }
 
-#pmf-media-folder-filter {
+#rsmf-media-folder-filter {
 	max-width: 220px;
 }
 
-.pmf-modal-new-folder {
+.rsmf-modal-new-folder {
 	vertical-align: middle;
 }
 
@@ -40,13 +40,13 @@
 	height: auto;
 }
 
-.media-modal .media-toolbar-secondary .pmf-combobox {
+.media-modal .media-toolbar-secondary .rsmf-combobox {
 	clear: left;
 	float: left;
 	margin: 4px 10px 0 0;
 }
 
-.media-modal .media-toolbar-secondary .pmf-modal-new-folder {
+.media-modal .media-toolbar-secondary .rsmf-modal-new-folder {
 	float: left;
 	margin: 4px 10px 0 0;
 	min-height: 32px;
@@ -59,7 +59,7 @@
    toolbar height (see admin.js) — toolbar height varies per modal
    variant (labeled filters, control wrapping). */
 
-.pmf-modal-folder-input {
+.rsmf-modal-folder-input {
 	font-size: 13px;
 	min-height: 32px;
 	max-height: 32px;
@@ -69,7 +69,7 @@
 	width: 180px;
 }
 
-.pmf-modal-folder-error {
+.rsmf-modal-folder-error {
 	color: #d63638;
 	font-size: 12px;
 	margin-left: 8px;

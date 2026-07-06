@@ -3,22 +3,22 @@
  * Routes new uploads into a chosen physical folder instead of the
  * default year/month structure.
  *
- * @package Physical_Media_Folders
+ * @package Rootstuff_Media_Folders
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class PMF_Uploads {
+class RSMF_Uploads {
 
 	/**
-	 * @var PMF_Uploads|null
+	 * @var RSMF_Uploads|null
 	 */
 	protected static $instance = null;
 
 	/**
-	 * @return PMF_Uploads
+	 * @return RSMF_Uploads
 	 */
 	public static function instance() {
 		if ( null === self::$instance ) {
@@ -37,10 +37,10 @@ class PMF_Uploads {
 	 * @return string|null Relative path ('' for the uploads root) or null.
 	 */
 	protected function requested_folder() {
-		if ( ! isset( $_GET['pmf_folder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- destination preselection only.
+		if ( ! isset( $_GET['rsmf_folder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- destination preselection only.
 			return null;
 		}
-		return PMF_Media_Library::normalize_choice( sanitize_text_field( wp_unslash( $_GET['pmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return RSMF_Media_Library::normalize_choice( sanitize_text_field( wp_unslash( $_GET['rsmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -56,7 +56,7 @@ class PMF_Uploads {
 			if ( ! isset( $init['multipart_params'] ) || ! is_array( $init['multipart_params'] ) ) {
 				$init['multipart_params'] = array();
 			}
-			$init['multipart_params']['pmf_folder'] = ( '' === $folder ) ? PMF_Media_Library::ROOT : $folder;
+			$init['multipart_params']['rsmf_folder'] = ( '' === $folder ) ? RSMF_Media_Library::ROOT : $folder;
 		}
 		return $init;
 	}
@@ -75,14 +75,14 @@ class PMF_Uploads {
 		}
 
 		$requested = $this->requested_folder();
-		$current   = ( null === $requested ) ? '' : ( ( '' === $requested ) ? PMF_Media_Library::ROOT : $requested );
+		$current   = ( null === $requested ) ? '' : ( ( '' === $requested ) ? RSMF_Media_Library::ROOT : $requested );
 		?>
-		<p class="pmf-upload-destination">
-			<label for="pmf-upload-folder"><strong><?php esc_html_e( 'Upload to folder:', 'physical-media-folders' ); ?></strong></label>
-			<select name="pmf_folder" id="pmf-upload-folder">
-				<option value=""><?php esc_html_e( 'WordPress default (year/month)', 'physical-media-folders' ); ?></option>
+		<p class="rsmf-upload-destination">
+			<label for="rsmf-upload-folder"><strong><?php esc_html_e( 'Upload to folder:', 'rootstuff-media-folders' ); ?></strong></label>
+			<select name="rsmf_folder" id="rsmf-upload-folder">
+				<option value=""><?php esc_html_e( 'WordPress default (year/month)', 'rootstuff-media-folders' ); ?></option>
 				<?php
-				foreach ( PMF_Media_Library::folder_choices() as $choice => $label ) {
+				foreach ( RSMF_Media_Library::folder_choices() as $choice => $label ) {
 					if ( '' === $choice ) {
 						continue;
 					}
@@ -108,14 +108,14 @@ class PMF_Uploads {
 	 * @return array
 	 */
 	public function filter_upload_dir( $dirs ) {
-		$folder = (string) pmf_get_setting( 'default_upload_folder' );
+		$folder = (string) rsmf_get_setting( 'default_upload_folder' );
 		$folder = ( '' === $folder ) ? null : $folder;
 
 		// A folder selected in the tree sidebar rides along with the upload
 		// request and wins over the default setting. Capability and nonce
 		// for the upload itself are enforced by core before files land.
-		if ( isset( $_POST['pmf_folder'] ) && '' !== $_POST['pmf_folder'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$requested = PMF_Media_Library::normalize_choice( sanitize_text_field( wp_unslash( $_POST['pmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( isset( $_POST['rsmf_folder'] ) && '' !== $_POST['rsmf_folder'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$requested = RSMF_Media_Library::normalize_choice( sanitize_text_field( wp_unslash( $_POST['rsmf_folder'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			if ( null !== $requested ) {
 				$folder = $requested;
 			}
@@ -130,13 +130,13 @@ class PMF_Uploads {
 		 *
 		 * @param string|null $folder Relative folder path or null.
 		 */
-		$folder = apply_filters( 'pmf_upload_folder', $folder );
+		$folder = apply_filters( 'rsmf_upload_folder', $folder );
 
 		if ( null === $folder || ! $this->is_media_upload() ) {
 			return $dirs;
 		}
 
-		$clean = PMF_Folders::sanitize_path( $folder );
+		$clean = RSMF_Folders::sanitize_path( $folder );
 		if ( is_wp_error( $clean ) ) {
 			return $dirs;
 		}
