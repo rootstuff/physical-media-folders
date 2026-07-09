@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Rootstuff Media Folders
- * Plugin URI:        https://adambalee.com/plugins/rootstuff-media-folders
+ * Plugin URI:        https://rootstuff.io/rootstuff-media-folders
  * Description:       Organize your media library into real folders on the server. Moves files physically, updates database paths, rewrites content URLs, and creates 301 redirects.
  * Version:           1.2.3
  * Requires at least: 6.0
