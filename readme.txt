@@ -1,5 +1,5 @@
 === Rootstuff Media Folders ===
-Contributors: adambalee
+Contributors: atomjb
 Tags: media library, folders, organize, media, files
 Requires at least: 6.0
 Tested up to: 7.0
